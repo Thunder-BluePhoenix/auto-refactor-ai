@@ -1,0 +1,59 @@
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: mixed-line-ending
+
+  # Python code formatting with black
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3.11
+        args: ['--line-length=100']
+
+  # Python linting with ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.14
+    hooks:
+      - id: ruff
+        args: ['--fix', '--exit-non-zero-on-fix']
+
+  # Type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: []
+        args: ['--ignore-missing-imports', '--no-strict-optional']
+
+  # Run auto-refactor-ai on itself (dogfooding!)
+  - repo: local
+    hooks:
+      - id: auto-refactor-ai
+        name: auto-refactor-ai
+        entry: python -m auto_refactor_ai.cli
+        language: system
+        types: [python]
+        pass_filenames: true
+        args: ['--max-len=50']  # Strict settings for our own code
+
+  # Run tests before committing
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: ['--cov=auto_refactor_ai', '--cov-fail-under=80', '-q']
