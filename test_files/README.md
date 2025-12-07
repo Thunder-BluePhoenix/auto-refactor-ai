@@ -66,6 +66,38 @@ This directory contains test files to validate the auto-refactor-ai analyzer.
   - Unicode function names
 - **Expected Results**: Varies by case
 
+### `test_ai_refactoring.py` (V7+)
+- **Purpose**: Functions ideal for AI refactoring suggestions
+- **Contains**:
+  - Complex functions with multiple violations
+  - Before/after refactoring examples
+  - OrderConfig pattern demonstration
+  - Guard clause transformation examples
+- **Expected Results**:
+  - `calculate_order_total`: CRITICAL (8 params)
+  - `validate_user_data`: WARN (5 levels nesting)
+  - `process_data_pipeline`: INFO (35+ lines)
+  - `analyze_sales_report`: Multiple CRITICAL issues
+
+### `test_real_world_patterns.py` (V7+)
+- **Purpose**: Realistic production code patterns
+- **Contains**:
+  - API handlers with mixed concerns
+  - CSV processors with configuration
+  - Statistical calculations with nesting
+  - Form validation with excessive nesting
+- **Expected Results**: Mix of WARN and CRITICAL issues
+
+### `test_modern_python.py` (V7+)
+- **Purpose**: Modern Python features testing
+- **Contains**:
+  - Async/await functions
+  - Type-hinted functions
+  - Dataclass methods
+  - Generator functions
+  - Context managers
+- **Expected Results**: Various parameter and nesting issues
+
 ### `sample_test.py` (Original V0 test file)
 - **Purpose**: Original test file from V0
 - **Contains**: Long functions with comments
