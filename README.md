@@ -1,14 +1,16 @@
 # Auto Refactor AI
 
-[![PyPI version](https://img.shields.io/badge/pypi-v0.3.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
+[![PyPI version](https://img.shields.io/badge/pypi-v0.4.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/coverage-88%25-brightgreen.svg)]()
 
 A beginner-friendly static analyzer for Python code that detects code quality issues and suggests refactoring opportunities.
 
-## Current Version: V3 (0.3.0)
+## Current Version: V4 (0.4.0)
 
-**Now pip-installable!** V3 makes Auto Refactor AI a proper Python package that can be installed and used globally on your system.
+**Production-ready with tests & CI/CD!** V4 adds comprehensive testing, GitHub Actions CI/CD, and pre-commit hooks for automated quality assurance.
 
 ## Features
 

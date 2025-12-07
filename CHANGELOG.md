@@ -2,6 +2,91 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V4] - 2025-12-08
+
+### Added
+- **Comprehensive Test Suite**
+  - 60+ unit tests with pytest framework
+  - Test coverage: 88% (exceeds 80% requirement)
+  - Three test modules: `test_analyzer.py`, `test_config.py`, `test_cli.py`
+  - 19 test classes covering all functionality
+  - Edge case testing (syntax errors, empty files, invalid configs)
+
+- **GitHub Actions CI/CD**
+  - `.github/workflows/test.yml` - Automated testing pipeline
+  - Tests run on 15 combinations (3 OS × 5 Python versions)
+  - Multi-platform: Ubuntu, Windows, macOS
+  - Python versions: 3.8, 3.9, 3.10, 3.11, 3.12
+  - Code quality checks (black, ruff, mypy)
+  - Self-analysis job (dogfooding)
+  - Codecov integration for coverage tracking
+
+- **Pre-commit Hooks**
+  - `.pre-commit-config.yaml` - Automated quality checks
+  - General file checks (trailing whitespace, EOF, YAML/TOML validation)
+  - Black for code formatting (100-char line length)
+  - Ruff for linting with auto-fixes
+  - Mypy for static type checking
+  - Self-analysis before commits (dogfooding with strict settings)
+  - Pytest runs before every commit
+
+- **Code Quality Tools Configuration**
+  - Black configuration in `pyproject.toml` (100-char lines)
+  - Ruff configuration (pycodestyle, pyflakes, isort, pep8-naming, pyupgrade, flake8-bugbear)
+  - Mypy configuration (type checking settings)
+  - Coverage configuration (80% minimum, exclude test files)
+  - All tools configured for Python 3.8+ compatibility
+
+- **Development Dependencies**
+  - `pytest>=7.0` - Test framework
+  - `pytest-cov>=4.0` - Coverage reporting
+  - `pytest-mock>=3.10` - Mocking utilities
+  - `black>=23.0` - Code formatter
+  - `ruff>=0.1.0` - Fast linter
+  - `mypy>=1.0` - Type checker
+  - `pre-commit>=3.0` - Pre-commit hooks framework
+
+### Changed
+- Updated version to 0.4.0
+- Improved test isolation with proper setup/teardown
+- Enhanced error handling in tests
+
+### Testing Details
+- **Analyzer Tests (26 tests)**
+  - Severity enum and Issue dataclass tests
+  - NestingVisitor AST pattern tests
+  - Function length detection with all severity levels
+  - Parameter count detection with *args, **kwargs
+  - Nesting depth detection tests
+  - Full file analysis integration tests
+  - Edge cases: nonexistent files, syntax errors
+
+- **Config Tests (22 tests)**
+  - Config dataclass operations
+  - TOML parsing (simple and pyproject.toml formats)
+  - Config file discovery in parent directories
+  - YAML parsing fallback
+  - Auto-discovery integration
+
+- **CLI Tests (12 tests)**
+  - Text output formatting
+  - JSON output validation
+  - Help flag and argument parsing
+  - Directory analysis
+  - Config file loading and CLI overrides
+  - Error handling for nonexistent paths
+
+### Learning Outcomes
+- Pytest framework and best practices
+- Test coverage reporting and analysis
+- GitHub Actions CI/CD workflows
+- Pre-commit hooks configuration
+- Code quality automation
+- Multi-platform testing strategies
+- Dogfooding (using your own tool)
+
+---
+
 ## [V3] - 2025-12-08
 
 ### Added
