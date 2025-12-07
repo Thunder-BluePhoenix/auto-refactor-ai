@@ -1,10 +1,14 @@
-# Auto Refactor AI - V2
+# Auto Refactor AI
+
+[![PyPI version](https://img.shields.io/badge/pypi-v0.3.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A beginner-friendly static analyzer for Python code that detects code quality issues and suggests refactoring opportunities.
 
-## Current Version: V2
+## Current Version: V3 (0.3.0)
 
-V2 adds configuration file support and machine-readable JSON output, making the analyzer more flexible and suitable for integration with tools and CI/CD pipelines.
+**Now pip-installable!** V3 makes Auto Refactor AI a proper Python package that can be installed and used globally on your system.
 
 ## Features
 
@@ -22,18 +26,33 @@ V2 adds configuration file support and machine-readable JSON output, making the 
 
 ## Installation
 
-1. Clone or download this project
-2. Navigate to the project directory
-3. (Optional) Create and activate a virtual environment:
+### Option 1: Install from PyPI (Recommended)
 
 ```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+pip install auto-refactor-ai
+```
 
-# macOS/Linux
-python -m venv venv
-source venv/bin/activate
+That's it! You can now use `auto-refactor-ai` command globally.
+
+### Option 2: Install from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/auto-refactor-ai.git
+cd auto-refactor-ai
+
+# Install in development mode
+pip install -e .
+```
+
+### Option 3: Install from Local Build
+
+```bash
+# Build the package
+python -m build
+
+# Install the wheel
+pip install dist/auto_refactor_ai-0.3.0-py3-none-any.whl
 ```
 
 ## Usage
@@ -42,9 +61,12 @@ source venv/bin/activate
 
 ```bash
 # Analyze a single file
-python -m auto_refactor_ai path/to/your_script.py
+auto-refactor-ai path/to/your_script.py
 
 # Analyze an entire directory
+auto-refactor-ai .
+
+# The old way still works too
 python -m auto_refactor_ai .
 ```
 
@@ -52,16 +74,19 @@ python -m auto_refactor_ai .
 
 ```bash
 # Customize thresholds
-python -m auto_refactor_ai . --max-len 20 --max-params 3 --max-nesting 2
+auto-refactor-ai . --max-len 20 --max-params 3 --max-nesting 2
 
 # Use a specific config file
-python -m auto_refactor_ai . --config path/to/config.toml
+auto-refactor-ai . --config path/to/config.toml
 
 # Output as JSON for tool integration
-python -m auto_refactor_ai . --format json
+auto-refactor-ai . --format json
 
 # Combine options
-python -m auto_refactor_ai . --config examples/config-strict.toml --format json
+auto-refactor-ai . --config examples/config-strict.toml --format json
+
+# Get help
+auto-refactor-ai --help
 ```
 
 **Available options:**
@@ -175,26 +200,55 @@ SUMMARY
 }
 ```
 
-## What's New in V2
+## What's New
 
-Compared to V1, V2 adds:
+### V3 (Current - 0.3.0)
+
+V3 makes Auto Refactor AI a proper pip-installable package:
+
+1. **Pip Installable**:
+   - Install with `pip install auto-refactor-ai`
+   - Global `auto-refactor-ai` command
+   - No need for `python -m` anymore
+
+2. **Professional Package**:
+   - Proper `pyproject.toml` configuration
+   - Console script entry point
+   - MIT License
+   - Ready for PyPI distribution
+
+3. **Enhanced Documentation**:
+   - Complete V1, V2, V3 implementation guides
+   - Publishing guide for PyPI
+   - Verification script for testing
+   - Release checklist
+
+### V2 (0.2.0)
+
+V2 added configuration and output flexibility:
 
 1. **Configuration File Support**:
    - Auto-discovery of config files
    - TOML and YAML formats
    - Integration with `pyproject.toml`
-   - Command-line arguments override config files
+   - CLI arguments override configs
 
 2. **JSON Output Mode**:
-   - Machine-readable structured output
-   - Includes config, summary, and detailed issues
-   - Perfect for IDE extensions and CI/CD integration
-   - Enables programmatic analysis
+   - Machine-readable output
+   - Perfect for CI/CD and IDE integration
+   - Structured data with config, summary, and issues
 
-3. **Enhanced Flexibility**:
-   - Per-project configuration
-   - Easy integration with existing tooling
-   - Supports multiple workflow styles
+### V1 (0.1.0)
+
+V1 introduced multiple analysis rules:
+
+1. **Three Analysis Rules**:
+   - Rule 1: Function length
+   - Rule 2: Too many parameters
+   - Rule 3: Deep nesting
+
+2. **Severity Levels**: INFO, WARN, CRITICAL
+3. **Better Output**: Sorted by severity with summary
 
 ## Project Structure
 
@@ -294,7 +348,7 @@ auto-refactor-ai/
 
 ```bash
 # In GitHub Actions, GitLab CI, etc.
-python -m auto_refactor_ai . --format json > analysis.json
+auto-refactor-ai . --format json > analysis.json
 # Parse JSON and fail build if critical issues found
 ```
 
@@ -302,21 +356,21 @@ python -m auto_refactor_ai . --format json > analysis.json
 
 ```bash
 # Check only changed files
-git diff --name-only | grep '\.py$' | xargs python -m auto_refactor_ai
+git diff --name-only | grep '\.py$' | xargs auto-refactor-ai
 ```
 
 ### IDE Integration
 
 Use JSON output to create IDE extensions:
 ```bash
-python -m auto_refactor_ai current_file.py --format json
+auto-refactor-ai current_file.py --format json
 ```
 
 ### Code Review
 
 Generate reports for code review:
 ```bash
-python -m auto_refactor_ai src/ > code_review.txt
+auto-refactor-ai src/ > code_review.txt
 ```
 
 ## Roadmap
@@ -324,16 +378,20 @@ python -m auto_refactor_ai src/ > code_review.txt
 - **V0**: ✅ Single rule (function length), basic CLI
 - **V1**: ✅ Multiple rules, severity levels, improved output
 - **V2**: ✅ Config files & JSON output
-- **V3**: Pip installable package
-- **V4**: Tests & CI/CD
-- **V5**: Detailed explanations
+- **V3**: ✅ Pip installable package (CURRENT - v0.3.0)
+- **V4**: 🚧 Tests & CI/CD (NEXT)
+  - pytest test suite with >80% coverage
+  - GitHub Actions workflow
+  - Pre-commit hooks
+  - Code quality checks (black, ruff)
+- **V5**: Detailed explanations for each rule
 - **V6**: AI-powered suggestions using LLMs
 - **V7**: Auto-fix mode with automated refactoring
-- **V8**: Project-level analysis
-- **V9**: Git integration & pre-commit hooks
+- **V8**: Project-level analysis & duplicate detection
+- **V9**: Git integration & smart pre-commit hooks
 - **V10**: Refactor planning mode
-- **V11**: Editor/IDE integration
-- **V12**: Community-ready release
+- **V11**: Editor/IDE integration (VS Code, etc.)
+- **V12**: Community-ready release with marketing
 
 ## Learning Path
 
