@@ -10,7 +10,7 @@ from .explanations import get_explanation, format_explanation, get_severity_guid
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Auto Refactor AI – Static analyzer with AI-powered suggestions (V6)"
+        description="Auto Refactor AI – Static analyzer with AI-powered suggestions and auto-apply (V7)"
     )
     parser.add_argument(
         "path",
@@ -85,6 +85,39 @@ def main():
         action="store_true",
         help="Check which LLM providers are available and exit.",
     )
+    # V7: Auto-Refactor Mode
+    parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="Apply AI-suggested refactorings to files (V7). Use with --ai-suggestions.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be applied without making changes (V7).",
+    )
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Ask for approval before applying each refactoring (V7).",
+    )
+    parser.add_argument(
+        "--backup",
+        action="store_true",
+        default=True,
+        help="Create backups before applying changes. Default: True (V7).",
+    )
+    parser.add_argument(
+        "--no-backup",
+        action="store_true",
+        help="Disable backup creation (V7). Use with caution!",
+    )
+    parser.add_argument(
+        "--backup-dir",
+        type=str,
+        default=".auto-refactor-backup",
+        help="Directory for backups. Default: .auto-refactor-backup (V7).",
+    )
 
     args = parser.parse_args()
 
@@ -115,7 +148,7 @@ def main():
         print(f"[ERROR] Path not found: {target_path}")
         sys.exit(1)
 
-    # V6: AI Suggestions mode
+    # V6: AI Suggestions mode (optionally with V7 auto-apply)
     if args.ai_suggestions:
         handle_ai_suggestions(issues, args)
         return
@@ -139,7 +172,7 @@ def main():
 
 
 def handle_ai_suggestions(issues, args):
-    """Handle AI suggestions mode (V6)."""
+    """Handle AI suggestions mode (V6) with optional auto-apply (V7)."""
     from .ai_suggestions import (
         get_ai_suggestions,
         print_ai_suggestions,
@@ -170,8 +203,58 @@ def handle_ai_suggestions(issues, args):
         skip_info=True,
     )
 
-    # Print results
+    # V7: Auto-apply mode
+    if args.apply:
+        handle_auto_refactor(summary, args)
+        return
+
+    # V6: Just print suggestions
     print_ai_suggestions(summary, show_original=True)
+
+
+def handle_auto_refactor(ai_summary, args):
+    """Handle auto-refactor mode (V7)."""
+    from .auto_refactor import auto_refactor, print_refactor_results
+
+    if not ai_summary.results:
+        if ai_summary.errors:
+            print("\n⚠️  Errors occurred during AI analysis:")
+            for error in ai_summary.errors:
+                print(f"   • {error}")
+        else:
+            print("\n✓ No suggestions to apply.\n")
+        return
+
+    # Determine mode
+    dry_run = args.dry_run
+    interactive = args.interactive
+    create_backups = args.backup and not args.no_backup
+    backup_dir = args.backup_dir
+
+    # Show mode info
+    mode_info = []
+    if dry_run:
+        mode_info.append("DRY RUN")
+    if interactive:
+        mode_info.append("INTERACTIVE")
+    if not create_backups:
+        mode_info.append("NO BACKUP")
+    
+    mode_str = f" ({', '.join(mode_info)})" if mode_info else ""
+    print(f"\n🔧 Auto-Refactor Mode{mode_str}")
+    print(f"   {len(ai_summary.results)} suggestion(s) to process\n")
+
+    # Run auto-refactor
+    result_summary = auto_refactor(
+        ai_summary=ai_summary,
+        dry_run=dry_run,
+        interactive=interactive,
+        backup_dir=backup_dir,
+        create_backups=create_backups,
+    )
+
+    # Print results
+    print_refactor_results(result_summary)
 
 
 def analyze_single_file(path: Path, config: Config):
