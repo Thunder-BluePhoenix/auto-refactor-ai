@@ -1,22 +1,26 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "auto-refactor-ai"
-version = "0.1.0"
-description = "A beginner-friendly static analyzer for Python code refactoring suggestions"
+version = "0.3.0"
+description = "A beginner-friendly static analyzer for Python code with configurable rules and AI-ready architecture"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
-keywords = ["refactoring", "static-analysis", "code-quality", "linting"]
+keywords = ["refactoring", "static-analysis", "code-quality", "linting", "ast", "complexity"]
 authors = [
-    {name = "Auto Refactor AI Contributors"}
+    {name = "Auto Refactor AI Contributors", email = "auto-refactor-ai@example.com"}
+]
+maintainers = [
+    {name = "Auto Refactor AI Contributors", email = "auto-refactor-ai@example.com"}
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -24,12 +28,38 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "ruff>=0.1.0",
 ]
 
 [project.scripts]
-auto-refactor-ai = "auto_refactor_ai:main"
+auto-refactor-ai = "auto_refactor_ai.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/yourusername/auto-refactor-ai"
 Repository = "https://github.com/yourusername/auto-refactor-ai"
 Issues = "https://github.com/yourusername/auto-refactor-ai/issues"
+Documentation = "https://github.com/yourusername/auto-refactor-ai#readme"
+Changelog = "https://github.com/yourusername/auto-refactor-ai/blob/main/CHANGELOG.md"
+
+[tool.auto-refactor-ai]
+max_function_length = 30
+max_parameters = 5
+max_nesting_depth = 3
+enabled_rules = ["function-too-long", "too-many-parameters", "deep-nesting"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["auto_refactor_ai*"]
+exclude = ["tests*", "test_files*", "examples*"]
+
+[tool.setuptools.package-data]
+auto_refactor_ai = ["py.typed"]

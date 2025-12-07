@@ -1,0 +1,15 @@
+# Include documentation
+include README.md
+include LICENSE
+include CHANGELOG.md
+
+# Include configuration examples
+recursive-include examples *.toml *.yaml *.yml
+
+# Exclude test files from distribution
+recursive-exclude test_files *
+recursive-exclude tests *
+
+# Exclude development files
+exclude .gitignore
+exclude .auto-refactor-ai.toml
