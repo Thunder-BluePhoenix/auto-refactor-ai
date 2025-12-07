@@ -26,6 +26,16 @@ A beginner-friendly static analyzer for Python code that detects code quality is
 - **Comprehensive Summary**: Get counts by severity level
 - **Zero Dependencies**: Built only with Python standard library (Python 3.8+)
 
+### V4 Quality Assurance Features
+
+- **60+ Unit Tests**: Comprehensive test suite with pytest (88% coverage)
+- **GitHub Actions CI/CD**: Automated testing on 15 combinations (3 OS × 5 Python versions)
+- **Pre-commit Hooks**: Automatic code quality checks before commits
+- **Code Formatting**: Black formatter configured
+- **Linting**: Ruff for fast, comprehensive linting
+- **Type Checking**: Mypy static type analysis
+- **Dogfooding**: We use auto-refactor-ai to analyze itself!
+
 ## Installation
 
 ### Option 1: Install from PyPI (Recommended)
@@ -202,9 +212,99 @@ SUMMARY
 }
 ```
 
+## Development
+
+### For Contributors
+
+#### Install Development Dependencies
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/auto-refactor-ai.git
+cd auto-refactor-ai
+
+# Install with dev dependencies
+pip install -e ".[dev]"
+```
+
+#### Run Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=auto_refactor_ai --cov-report=term-missing
+
+# Run specific test file
+pytest tests/test_analyzer.py -v
+```
+
+#### Code Quality Tools
+
+```bash
+# Format code with black
+black auto_refactor_ai tests
+
+# Lint with ruff
+ruff check --fix auto_refactor_ai tests
+
+# Type check with mypy
+mypy auto_refactor_ai
+```
+
+#### Pre-commit Hooks
+
+```bash
+# Install pre-commit hooks
+pre-commit install
+
+# Run hooks manually
+pre-commit run --all-files
+```
+
+#### Run Self-Analysis (Dogfooding)
+
+```bash
+# Analyze our own codebase
+auto-refactor-ai auto_refactor_ai/
+
+# With strict settings
+auto-refactor-ai auto_refactor_ai/ --max-len 50
+```
+
 ## What's New
 
-### V3 (Current - 0.3.0)
+### V4 (Current - 0.4.0)
+
+V4 makes Auto Refactor AI production-ready with comprehensive testing and automation:
+
+1. **Comprehensive Testing**:
+   - 60+ unit tests with pytest
+   - 88% code coverage (exceeds 80% requirement)
+   - Tests for analyzer, config, and CLI modules
+   - Edge case testing
+
+2. **GitHub Actions CI/CD**:
+   - Automated testing on push and PR
+   - Multi-platform: Ubuntu, Windows, macOS
+   - Multi-version: Python 3.8 - 3.12
+   - Code quality checks (black, ruff, mypy)
+   - Self-analysis job (dogfooding)
+
+3. **Pre-commit Hooks**:
+   - Automatic code formatting
+   - Linting and type checking
+   - Tests run before commits
+   - Self-analysis with strict settings
+
+4. **Code Quality**:
+   - Black for formatting (100-char lines)
+   - Ruff for linting
+   - Mypy for type checking
+   - All configured in pyproject.toml
+
+### V3 (0.3.0)
 
 V3 makes Auto Refactor AI a proper pip-installable package:
 
