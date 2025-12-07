@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "auto-refactor-ai"
+version = "0.1.0"
+description = "A beginner-friendly static analyzer for Python code refactoring suggestions"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+keywords = ["refactoring", "static-analysis", "code-quality", "linting"]
+authors = [
+    {name = "Auto Refactor AI Contributors"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.scripts]
+auto-refactor-ai = "auto_refactor_ai:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/auto-refactor-ai"
+Repository = "https://github.com/yourusername/auto-refactor-ai"
+Issues = "https://github.com/yourusername/auto-refactor-ai/issues"
