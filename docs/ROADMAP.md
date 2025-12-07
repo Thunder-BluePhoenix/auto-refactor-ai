@@ -209,59 +209,58 @@ auto-refactor-ai . --max-len 25
 
 ## 🧠 V5 – AI Touch: Explain Issues in Natural Language
 
-**Status:** 🔄 NEXT UP
+**Status:** ✅ COMPLETE (v0.5.0)
 
 **Goal:** Start the "AI" part softly (no LLM yet).
 
+**Achievement:** Comprehensive explanation system with templates, examples, and references.
+
 **Features:**
-- Detailed explanations for each issue
-- Template-based suggestions
-- Best practice recommendations
-- Refactoring hints
-
-**Example Output:**
-```
-[WARN] service.py:42-90  process_order()
-  - 9 parameters detected
-
-Why this matters:
-  Functions with too many parameters are harder to test and reuse.
-
-How to refactor:
-  1. Group related parameters into a dataclass or config object
-  2. Split responsibilities across multiple functions
-  3. Consider using builder pattern for complex objects
-```
+- ✅ Detailed explanations for each issue
+- ✅ Template-based suggestions
+- ✅ Best practice recommendations
+- ✅ Refactoring hints
+- ✅ `--explain` flag for verbose explanations
+- ✅ `--explain-summary` flag for brief tips
+- ✅ 15 new tests
 
 **What You Learn:**
 - Good error message design
 - Refactoring theory (DRY, SRP, cohesion)
 - Documentation practices
 
-**Implementation Tasks:**
-- [ ] Create explanation templates
-- [ ] Add `--explain` flag
-- [ ] Design explanation system
-- [ ] Add refactoring examples
+**Completed Implementation:**
+- [x] Create explanation templates (`explanations.py`)
+- [x] Add `--explain` flag
+- [x] Design explanation system
+- [x] Add refactoring examples
+- [x] Add good/bad code examples
+- [x] Add references to Clean Code, Refactoring Guru
 
 ---
 
 ## 🤖 V6 – AI Suggestions (Real LLM Integration)
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.6.0)
 
 **Goal:** Use an LLM to propose refactored code.
 
+**Achievement:** Full LLM integration with 4 providers, prompt engineering, and cost tracking.
+
 **Features:**
-- `--ai-suggestions` flag
-- LLM-powered refactoring suggestions
-- Support multiple LLM providers (OpenAI, Anthropic, local)
-- Preserve behavior guarantees
-- Show before/after comparisons
+- ✅ `--ai-suggestions` flag
+- ✅ LLM-powered refactoring suggestions
+- ✅ Support for OpenAI, Anthropic, Google, Ollama
+- ✅ Show before/after comparisons
+- ✅ Confidence scoring
+- ✅ Token tracking and cost estimation
+- ✅ 41 new tests (113 total)
 
 **Example:**
 ```bash
 auto-refactor-ai service.py --ai-suggestions
+auto-refactor-ai service.py --ai-suggestions --ai-provider openai
+auto-refactor-ai . --check-providers
 ```
 
 **What You Learn:**
@@ -269,22 +268,24 @@ auto-refactor-ai service.py --ai-suggestions
 - Prompt engineering
 - API error handling
 - Token management
-- Safety considerations
+- Provider abstraction pattern
 
-**Implementation Tasks:**
-- [ ] Add LLM provider abstraction
-- [ ] Implement OpenAI integration
-- [ ] Implement Anthropic integration
-- [ ] Create refactoring prompts
-- [ ] Add API key management
-- [ ] Handle timeouts/errors
-- [ ] Add cost estimation
+**Completed Implementation:**
+- [x] Add LLM provider abstraction (`llm_providers.py`)
+- [x] Implement OpenAI integration
+- [x] Implement Anthropic integration
+- [x] Implement Google Gemini integration
+- [x] Implement Ollama (local) integration
+- [x] Create refactoring prompts
+- [x] Add API key management
+- [x] Handle timeouts/errors
+- [x] Add cost estimation
 
 ---
 
 ## ⚡ V7 – Auto-Refactor Mode (Generate Patches)
 
-**Status:** 📋 PLANNED
+**Status:** 🔄 NEXT UP
 
 **Goal:** Move from advice → action.
 

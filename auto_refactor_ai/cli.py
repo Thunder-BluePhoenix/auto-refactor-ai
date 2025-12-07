@@ -10,7 +10,7 @@ from .explanations import get_explanation, format_explanation, get_severity_guid
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Auto Refactor AI – Static analyzer with detailed explanations (V5)"
+        description="Auto Refactor AI – Static analyzer with AI-powered suggestions (V6)"
     )
     parser.add_argument(
         "path",
@@ -56,8 +56,43 @@ def main():
         action="store_true",
         help="Show brief explanations for each issue (V5)",
     )
+    # V6: AI Suggestions
+    parser.add_argument(
+        "--ai-suggestions",
+        action="store_true",
+        help="Get AI-powered refactoring suggestions using LLM (V6). Requires API key.",
+    )
+    parser.add_argument(
+        "--ai-provider",
+        choices=["openai", "anthropic", "google", "ollama"],
+        default=None,
+        help="LLM provider to use for AI suggestions. Default: auto-detect.",
+    )
+    parser.add_argument(
+        "--ai-model",
+        type=str,
+        default=None,
+        help="Specific model to use (e.g., 'gpt-4o-mini', 'claude-3-haiku-20240307').",
+    )
+    parser.add_argument(
+        "--ai-max-issues",
+        type=int,
+        default=5,
+        help="Maximum number of issues to get AI suggestions for. Default: 5.",
+    )
+    parser.add_argument(
+        "--check-providers",
+        action="store_true",
+        help="Check which LLM providers are available and exit.",
+    )
 
     args = parser.parse_args()
+
+    # Check providers and exit if requested
+    if args.check_providers:
+        from .ai_suggestions import get_provider_status_message
+        print(get_provider_status_message())
+        sys.exit(0)
 
     # Load configuration
     config = load_config(Path(args.config) if args.config else None)
@@ -80,6 +115,11 @@ def main():
         print(f"[ERROR] Path not found: {target_path}")
         sys.exit(1)
 
+    # V6: AI Suggestions mode
+    if args.ai_suggestions:
+        handle_ai_suggestions(issues, args)
+        return
+
     # Output results
     if args.format == "json":
         print_json(issues, config)
@@ -96,6 +136,42 @@ def main():
 
         if target_path.is_dir():
             print_summary(issues)
+
+
+def handle_ai_suggestions(issues, args):
+    """Handle AI suggestions mode (V6)."""
+    from .ai_suggestions import (
+        get_ai_suggestions,
+        print_ai_suggestions,
+        get_provider_status_message,
+    )
+    from .llm_providers import LLMConfig, LLMProvider
+
+    if not issues:
+        print("\n✓ No issues found! Your code looks good - no AI suggestions needed.\n")
+        return
+
+    # Build LLM config from args
+    llm_config = None
+    if args.ai_provider or args.ai_model:
+        provider = LLMProvider(args.ai_provider) if args.ai_provider else LLMProvider.OPENAI
+        llm_config = LLMConfig.from_env(provider)
+        if args.ai_model:
+            llm_config.model = args.ai_model
+
+    print("\n🤖 Generating AI refactoring suggestions...")
+    print(f"   Analyzing up to {args.ai_max_issues} issues...\n")
+
+    # Get AI suggestions
+    summary = get_ai_suggestions(
+        issues=issues,
+        config=llm_config,
+        max_issues=args.ai_max_issues,
+        skip_info=True,
+    )
+
+    # Print results
+    print_ai_suggestions(summary, show_original=True)
 
 
 def analyze_single_file(path: Path, config: Config):

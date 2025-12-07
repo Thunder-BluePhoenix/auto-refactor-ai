@@ -2,6 +2,70 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V6] - 2025-12-08
+
+### Added
+- **LLM Provider Integration**
+  - New `llm_providers.py` module with unified LLM abstraction
+  - Support for OpenAI (GPT-4o, GPT-4o-mini, GPT-4-turbo)
+  - Support for Anthropic (Claude 3 Opus, Sonnet, Haiku)
+  - Support for Google (Gemini 1.5 Pro, Flash)
+  - Support for Ollama (local LLMs - CodeLlama, Llama2, Mistral)
+  - Auto-detection of available providers via environment variables
+
+- **AI-Powered Refactoring Suggestions**
+  - New `ai_suggestions.py` module for generating code improvements
+  - Extracts function source code from files
+  - Sends to LLM with engineered prompts
+  - Parses structured responses with before/after code
+  - Calculates confidence scores
+  - Tracks token usage and cost estimates
+
+- **New CLI Flags**
+  - `--ai-suggestions` - Get AI-powered refactoring suggestions
+  - `--ai-provider` - Choose specific LLM provider (openai/anthropic/google/ollama)
+  - `--ai-model` - Specify model (e.g., gpt-4o-mini, claude-3-haiku-20240307)
+  - `--ai-max-issues` - Limit number of issues to analyze (default: 5)
+  - `--check-providers` - Check which LLM providers are available
+
+- **Prompt Engineering**
+  - System prompt for code refactoring role
+  - Structured user prompts with context
+  - Response parsing for code blocks and explanations
+  - Change summary extraction
+
+- **Optional Dependencies**
+  - `[ai]` - OpenAI support
+  - `[ai-anthropic]` - Anthropic/Claude support
+  - `[ai-google]` - Google Gemini support
+  - `[ai-all]` - All providers
+
+- **New Tests**
+  - `tests/test_llm_providers.py` - 26 tests for LLM integration
+  - `tests/test_ai_suggestions.py` - 15 tests for AI suggestions
+  - Total test count: 113 (up from 75)
+
+### Changed
+- Updated version to 0.6.0
+- CLI description updated to "V6" with AI-powered suggestions
+- Package description now mentions LLM-based refactoring
+- Added "ai", "llm", "gpt" to package keywords
+
+### Documentation
+- `docs/versions/V6_GUIDE.md` - Complete V6 implementation guide
+- Updated installation instructions for AI dependencies
+- API key configuration guide
+- Cost estimation documentation
+
+### Learning Outcomes
+- Calling LLMs from Python (OpenAI, Anthropic, Google APIs)
+- Prompt engineering for code refactoring
+- API error handling and timeouts
+- Token management and cost estimation
+- Provider abstraction with factory pattern
+
+---
+
 ## [V5] - 2025-12-08
 
 ### Added
