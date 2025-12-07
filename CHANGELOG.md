@@ -2,6 +2,51 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V7] - 2025-12-08
+
+### Added
+- **Auto-Refactor Mode**
+  - New `auto_refactor.py` module (400+ lines) for applying AI suggestions
+  - Automatic application of refactorings to files
+  - Unified diff generation with `difflib`
+  - Before/after change previews
+
+- **Backup System**
+  - Timestamped file backups before modification
+  - Configurable backup directory
+  - Rollback capability from backups
+
+- **New CLI Flags**
+  - `--apply` - Apply AI-suggested refactorings to files
+  - `--dry-run` - Show what would be applied without making changes
+  - `--interactive` - Ask for approval before each change (y/n/q prompts)
+  - `--backup` - Enable backups (default: True)
+  - `--no-backup` - Disable backup creation
+  - `--backup-dir` - Directory for backups (default: `.auto-refactor-backup`)
+
+- **New Tests**
+  - `tests/test_auto_refactor.py` - 18 tests for auto-refactor module
+  - Tests for diff generation, backup, apply, rollback, formatting
+  - Total test count: 131 (up from 113)
+
+### Changed
+- Updated version to 0.7.0
+- CLI description updated to "V7" with auto-apply feature
+- Package description now mentions auto-apply
+
+### Documentation
+- `docs/versions/V7_GUIDE.md` - Complete V7 implementation guide
+- `V7_COMPLETION_SUMMARY.md` - Summary of all V7 achievements
+
+### Learning Outcomes
+- Working with diffs using `difflib`
+- Safe file modification patterns
+- Backup/restore strategies
+- Interactive CLI design
+- Destructive action protection
+
+---
+
 ## [V6] - 2025-12-08
 
 ### Added

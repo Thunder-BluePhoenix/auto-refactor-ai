@@ -285,43 +285,41 @@ auto-refactor-ai . --check-providers
 
 ## ⚡ V7 – Auto-Refactor Mode (Generate Patches)
 
-**Status:** 🔄 NEXT UP
+**Status:** ✅ COMPLETE (v0.7.0)
 
 **Goal:** Move from advice → action.
 
+**Achievement:** Full auto-refactor capability with backup, dry-run, and interactive modes.
+
 **Features:**
-- `--apply` flag for automatic fixes
-- Generate unified diff patches
-- Backup original files
-- Dry-run mode
-- Interactive approval
+- ✅ `--apply` flag for automatic fixes
+- ✅ Generate unified diff patches
+- ✅ Backup original files
+- ✅ Dry-run mode
+- ✅ Interactive approval
+- ✅ Rollback capability
+- ✅ 18 new tests (131 total)
 
 **Example:**
 ```bash
-auto-refactor-ai . --apply --backup
-# or
-auto-refactor-ai . --apply --interactive
+auto-refactor-ai . --ai-suggestions --apply --dry-run
+auto-refactor-ai . --ai-suggestions --apply --interactive
+auto-refactor-ai . --ai-suggestions --apply --backup
 ```
 
-**What You Learn:**
-- Parsing & editing files safely
-- Working with diffs (`difflib`)
-- Designing safe destructive actions
-- Backup/restore strategies
-
-**Implementation Tasks:**
-- [ ] Implement diff generation
-- [ ] Create backup system
-- [ ] Add interactive approval
-- [ ] Implement patch application
-- [ ] Add rollback capability
-- [ ] Safety validations
+**Completed Implementation:**
+- [x] Implement diff generation (`difflib.unified_diff`)
+- [x] Create backup system (timestamped)
+- [x] Add interactive approval (y/n/q prompts)
+- [x] Implement patch application
+- [x] Add rollback capability
+- [x] Safety validations
 
 ---
 
 ## 🧩 V8 – Project-Level Refactor Suggestions
 
-**Status:** 📋 PLANNED
+**Status:** 🔄 NEXT UP
 
 **Goal:** Go beyond single functions.
 

@@ -58,7 +58,7 @@ auto-refactor-ai/
 
 ## 📊 Current Status
 
-**Version:** V6 (v0.6.0) - AI-Powered ✅
+**Version:** V7 (v0.7.0) - Auto-Refactor Mode ✅
 
 **What Works:**
 - ✅ Multiple analysis rules (length, parameters, nesting)
@@ -66,7 +66,7 @@ auto-refactor-ai/
 - ✅ Configuration files (TOML/YAML)
 - ✅ JSON output for CI/CD integration
 - ✅ Pip installable package
-- ✅ Comprehensive test suite (113 tests, 85%+ coverage)
+- ✅ Comprehensive test suite (131 tests, 85%+ coverage)
 - ✅ GitHub Actions CI/CD (15 combinations)
 - ✅ Pre-commit hooks
 - ✅ Code quality tools (black, ruff, mypy)
@@ -74,10 +74,13 @@ auto-refactor-ai/
 - ✅ LLM-powered AI suggestions (V6)
 - ✅ Support for 4 LLM providers (OpenAI, Anthropic, Google, Ollama)
 - ✅ Token tracking & cost estimation
+- ✅ Auto-refactor mode with `--apply` flag (V7)
+- ✅ Backup system and rollback capability (V7)
+- ✅ Dry-run and interactive modes (V7)
 
 **What's Next:**
-- V7: Auto-refactor mode (generate patches, auto-apply)
-- V8: Project-level analysis
+- V8: Project-level analysis (cross-file analysis)
+- V9: Git integration
 - ... (see [Roadmap](ROADMAP.md))
 
 ---
@@ -242,8 +245,8 @@ python -m auto_refactor_ai . --rules all
 | **V4** | Tests & CI | ⭐⭐⭐ | ✅ Complete |
 | **V5** | Explanations | ⭐⭐ | ✅ Complete |
 | **V6** | LLM integration | ⭐⭐⭐⭐ | ✅ Complete |
-| **V7** | Auto-fix | ⭐⭐⭐⭐ | 🔄 Next Up |
-| **V8** | Project analysis | ⭐⭐⭐⭐ | 📋 Planned |
+| **V7** | Auto-fix | ⭐⭐⭐⭐ | ✅ Complete |
+| **V8** | Project analysis | ⭐⭐⭐⭐ | 🔄 Next Up |
 | **V9** | Git integration | ⭐⭐⭐ | 📋 Planned |
 | **V10** | Planning mode | ⭐⭐⭐⭐ | 📋 Planned |
 | **V11** | IDE integration | ⭐⭐⭐⭐⭐ | 📋 Planned |

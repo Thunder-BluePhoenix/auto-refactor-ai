@@ -640,6 +640,125 @@ class AIAnalysisSummary:
 
 ---
 
+## 🔧 Module: `auto_refactor_ai.auto_refactor` (V7) ✅
+
+Auto-refactor functionality for applying AI suggestions.
+
+---
+
+### Class: `RefactorResult`
+
+```python
+@dataclass
+class RefactorResult:
+    """Result of a single refactoring operation."""
+    file_path: str
+    function_name: str
+    original_code: str
+    refactored_code: str
+    start_line: int
+    end_line: int
+    backup_path: Optional[str] = None
+    diff: str = ""
+    applied: bool = False
+    skipped: bool = False
+    error: Optional[str] = None
+```
+
+---
+
+### Class: `RefactorSummary`
+
+```python
+@dataclass
+class RefactorSummary:
+    """Summary of all refactoring operations."""
+    results: List[RefactorResult]
+    backup_dir: Optional[str]
+    dry_run: bool
+
+    @property
+    def total_count(self) -> int: ...
+    @property
+    def applied_count(self) -> int: ...
+    @property
+    def skipped_count(self) -> int: ...
+    @property
+    def error_count(self) -> int: ...
+```
+
+---
+
+### Function: `generate_diff`
+
+```python
+def generate_diff(
+    original: str,
+    refactored: str,
+    file_path: str = "file.py",
+    context_lines: int = 3
+) -> str:
+    """Generate a unified diff between original and refactored code."""
+    ...
+```
+
+---
+
+### Function: `create_backup`
+
+```python
+def create_backup(file_path: str, backup_dir: str) -> str:
+    """Create a backup of a file before modification."""
+    ...
+```
+
+---
+
+### Function: `apply_refactoring`
+
+```python
+def apply_refactoring(
+    file_path: str,
+    original_function: str,
+    refactored_code: str,
+    start_line: int,
+    end_line: int
+) -> Tuple[bool, Optional[str]]:
+    """Apply refactored code to a file."""
+    ...
+```
+
+---
+
+### Function: `rollback_file`
+
+```python
+def rollback_file(
+    file_path: str,
+    backup_path: str
+) -> Tuple[bool, Optional[str]]:
+    """Rollback a file to its backup version."""
+    ...
+```
+
+---
+
+### Function: `auto_refactor`
+
+```python
+def auto_refactor(
+    ai_summary: AIAnalysisSummary,
+    dry_run: bool = True,
+    interactive: bool = False,
+    backup_dir: str = ".auto-refactor-backup",
+    create_backups: bool = True,
+) -> RefactorSummary:
+    """Apply AI suggestions to refactor code."""
+    ...
+```
+
+---
+
 ## 📊 Constants
 
 ```python
