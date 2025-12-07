@@ -435,20 +435,207 @@ def analyze_with_rules(
 
 ---
 
-### Class: `LLMProvider` (V6)
+### Class: `LLMProvider` (V6) ✅
 
-**Status:** Planned
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
 
 ```python
-class LLMProvider(ABC):
+class LLMProvider(Enum):
+    """Supported LLM providers."""
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    GOOGLE = "google"
+    OLLAMA = "ollama"
+```
+
+---
+
+### Class: `LLMConfig` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+@dataclass
+class LLMConfig:
+    """Configuration for LLM providers."""
+    provider: LLMProvider = LLMProvider.OPENAI
+    model: str = "gpt-4o-mini"
+    api_key: Optional[str] = None
+    base_url: Optional[str] = None
+    temperature: float = 0.3
+    max_tokens: int = 2000
+    timeout: int = 60
+
+    @classmethod
+    def from_env(cls, provider: LLMProvider = LLMProvider.OPENAI) -> "LLMConfig":
+        """Create config from environment variables."""
+        ...
+```
+
+---
+
+### Class: `BaseLLMProvider` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+class BaseLLMProvider(ABC):
+    """Base class for LLM providers."""
+
+    def __init__(self, config: LLMConfig): ...
+
     @abstractmethod
-    async def suggest_refactor(
+    def generate(self, prompt: str, system_prompt: Optional[str] = None) -> LLMResponse:
+        """Generate a response from the LLM."""
+        ...
+
+    def is_available(self) -> bool:
+        """Check if the provider is configured and available."""
+        ...
+
+    def get_refactoring_suggestion(
         self,
         code: str,
-        issue: Issue
-    ) -> str:
-        """Get AI-powered refactoring suggestion."""
-        pass
+        issue_type: str,
+        issue_message: str,
+        function_name: str
+    ) -> RefactoringSuggestion:
+        """Generate a refactoring suggestion for the given code."""
+        ...
+```
+
+**Implementations:** `OpenAIProvider`, `AnthropicProvider`, `GoogleProvider`, `OllamaProvider`
+
+---
+
+### Function: `get_provider` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+def get_provider(config: LLMConfig) -> BaseLLMProvider:
+    """Factory function to get appropriate provider based on config."""
+    ...
+```
+
+---
+
+### Function: `check_provider_availability` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+def check_provider_availability() -> Dict[str, bool]:
+    """Check which providers are available based on API keys and packages."""
+    ...
+```
+
+---
+
+## 🤖 Module: `auto_refactor_ai.ai_suggestions` (V6) ✅
+
+AI-powered code refactoring suggestions.
+
+---
+
+### Function: `extract_function_source`
+
+```python
+def extract_function_source(
+    file_path: str,
+    start_line: int,
+    end_line: int
+) -> str:
+    """Extract function source code from a file."""
+    ...
+```
+
+---
+
+### Function: `get_ai_suggestions`
+
+```python
+def get_ai_suggestions(
+    issues: List[Issue],
+    config: Optional[LLMConfig] = None,
+    max_issues: int = 5,
+    skip_info: bool = True,
+) -> AIAnalysisSummary:
+    """Get AI suggestions for a list of issues."""
+    ...
+```
+
+---
+
+### Function: `format_ai_suggestion`
+
+```python
+def format_ai_suggestion(
+    result: AIAnalysisResult,
+    show_original: bool = True
+) -> str:
+    """Format an AI suggestion for display."""
+    ...
+```
+
+---
+
+### Function: `print_ai_suggestions`
+
+```python
+def print_ai_suggestions(
+    summary: AIAnalysisSummary,
+    show_original: bool = True
+) -> None:
+    """Print all AI suggestions to stdout."""
+    ...
+```
+
+---
+
+### Class: `AIAnalysisResult`
+
+```python
+@dataclass
+class AIAnalysisResult:
+    """Result of AI analysis for a single issue."""
+    issue: Issue
+    suggestion: RefactoringSuggestion
+    original_function_code: str
+    tokens_used: int = 0
+    cost_estimate: float = 0.0
+```
+
+---
+
+### Class: `AIAnalysisSummary`
+
+```python
+@dataclass
+class AIAnalysisSummary:
+    """Summary of AI analysis for all issues."""
+    results: List[AIAnalysisResult]
+    total_tokens: int = 0
+    total_cost: float = 0.0
+    provider: str = ""
+    model: str = ""
+    errors: List[str]
+
+    @property
+    def success_count(self) -> int: ...
+
+    @property
+    def error_count(self) -> int: ...
 ```
 
 ---
