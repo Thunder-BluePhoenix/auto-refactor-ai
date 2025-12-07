@@ -371,83 +371,295 @@ pip install --index-url https://test.pypi.org/simple/ auto-refactor-ai
 
 ---
 
-### 🧱 V4 - Testing & CI/CD
+### 🧱 V4 - Testing & CI/CD (✅ IMPLEMENTED)
+
+**Status:** Complete in v0.4.0
+**Achievement:** 60 tests, 88% coverage, multi-platform CI/CD
 
 **Skills:**
-- Unit testing
-- Integration testing
-- GitHub Actions
-- Code coverage
+- Unit testing with pytest
+- Test coverage analysis
+- GitHub Actions workflows
+- Pre-commit hooks
+- Code quality automation
+- Test-Driven Development (TDD)
+- Mocking and fixtures
+- Multi-platform testing
 
-#### Writing Tests with pytest
+#### Writing Comprehensive Tests
+
+**Test Structure:**
+```
+tests/
+├── test_analyzer.py   # 26 tests - Core analysis
+├── test_config.py     # 22 tests - Configuration
+└── test_cli.py        # 12 tests - CLI interface
+```
+
+**Example 1: Testing with Arrange-Act-Assert Pattern**
 
 ```python
 # tests/test_analyzer.py
 import pytest
-from auto_refactor_ai.analyzer import analyze_file
+import ast
+from auto_refactor_ai.analyzer import check_function_length, Severity
 
-def test_detect_long_function(tmp_path):
-    # Create a temporary test file
-    test_file = tmp_path / "test.py"
-    test_file.write_text("""
-def long_function():
-    # Line 1
-    # Line 2
-    # ... (many lines)
-    # Line 50
-    pass
-""")
+def test_function_over_limit_critical():
+    """Test function way over limit (CRITICAL)."""
+    # Arrange - Create test data
+    lines = ["def extremely_long():\n"]
+    for i in range(68):
+        lines.append(f"    x{i} = {i}\n")
+    lines.append("    return x0\n")
+    code = "".join(lines)
 
-    # Run analyzer
-    issues = analyze_file(str(test_file), max_function_length=20)
+    # Act - Execute code under test
+    tree = ast.parse(code)
+    func = tree.body[0]
+    issue = check_function_length(func, "test.py", max_length=30)
 
-    # Assertions
-    assert len(issues) == 1
-    assert issues[0].function_name == "long_function"
-    assert issues[0].length > 20
-
-def test_no_issues_for_short_function(tmp_path):
-    test_file = tmp_path / "test.py"
-    test_file.write_text("""
-def short():
-    return 42
-""")
-
-    issues = analyze_file(str(test_file), max_function_length=20)
-    assert len(issues) == 0
+    # Assert - Verify results
+    assert issue is not None
+    assert issue.severity == Severity.CRITICAL
+    assert issue.details["actual_length"] == 70
+    assert "extremely_long" in issue.message
 ```
 
-#### GitHub Actions CI
+**Example 2: Using Fixtures for Reusable Setup**
+
+```python
+import pytest
+import tempfile
+from pathlib import Path
+
+@pytest.fixture
+def temp_config_file():
+    """Create temporary config file for testing."""
+    with tempfile.NamedTemporaryFile(
+        mode="w", suffix=".toml", delete=False
+    ) as f:
+        f.write("max_function_length = 40\n")
+        f.write("max_parameters = 7\n")
+        f.flush()
+        yield Path(f.name)
+    Path(f.name).unlink()
+
+def test_load_config_from_file(temp_config_file):
+    """Test loading configuration from file."""
+    config = load_toml_config(temp_config_file)
+    assert config["max_function_length"] == 40
+    assert config["max_parameters"] == 7
+```
+
+**Example 3: Mocking for CLI Tests**
+
+```python
+from unittest.mock import patch
+
+def test_main_with_help(self):
+    """Test running with --help flag."""
+    with patch("sys.argv", ["auto-refactor-ai", "--help"]):
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 0
+```
+
+#### Test Coverage Analysis
+
+**Run tests with coverage:**
+```bash
+pytest --cov=auto_refactor_ai --cov-report=term-missing
+```
+
+**Output:**
+```
+Name                           Stmts   Miss  Cover   Missing
+------------------------------------------------------------
+auto_refactor_ai/analyzer.py     110      2    98%   121, 158
+auto_refactor_ai/cli.py           74      3    96%   60, 96-97
+auto_refactor_ai/config.py       122     30    75%   55, 110, ...
+------------------------------------------------------------
+TOTAL                            309     36    88%
+```
+
+**Coverage Best Practices:**
+- Aim for 80%+ coverage
+- Focus on critical paths
+- Test edge cases
+- Don't chase 100% (diminishing returns)
+- Use `# pragma: no cover` for defensive code
+
+#### GitHub Actions CI/CD
+
+**Multi-Platform Testing:**
 
 ```yaml
 # .github/workflows/test.yml
 name: Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: Test on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          pip install -e .
-          pip install pytest pytest-cov
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
 
-      - name: Run tests
-        run: pytest --cov=auto_refactor_ai tests/
+    - name: Run tests
+      run: |
+        pytest --cov=auto_refactor_ai --cov-report=xml
+
+  lint:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install -e ".[dev]"
+
+    - name: Run black
+      run: black --check auto_refactor_ai tests
+
+    - name: Run ruff
+      run: ruff check auto_refactor_ai tests
+
+    - name: Run mypy
+      run: mypy auto_refactor_ai
+
+  dogfood:
+    name: Self-Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+    - run: pip install -e .
+    - run: auto-refactor-ai auto_refactor_ai/ --format json > self.json
+    - run: python -c "import json; exit(json.load(open('self.json'))['summary']['critical'])"
 ```
+
+**Key Concepts:**
+- **Matrix Testing:** Test on multiple OS and Python versions
+- **Fail-Fast:** Set to false to see all failures
+- **Codecov Integration:** Upload coverage for tracking
+- **Dogfooding:** Use your own tool to test itself
+
+#### Pre-commit Hooks
+
+**Configuration:** `.pre-commit-config.yaml`
+
+```yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.14
+    hooks:
+      - id: ruff
+        args: ['--fix']
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        pass_filenames: false
+        args: ['--cov=auto_refactor_ai', '--cov-fail-under=80', '-q']
+```
+
+**Install pre-commit:**
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+
+#### Key Learnings from V4
+
+**1. Test-Driven Development (TDD)**
+- Write tests first
+- See them fail (Red)
+- Implement minimal code to pass (Green)
+- Refactor while keeping tests green
+
+**2. Testing Best Practices**
+- **Arrange-Act-Assert** pattern for clarity
+- **Fixtures** for reusable test setup
+- **Mocking** for external dependencies
+- **Parametrized tests** for multiple scenarios
+- **Descriptive test names** that explain what's being tested
+
+**3. Coverage is a Guide, Not a Goal**
+- 80%+ is good enough
+- Focus on critical code paths
+- Test edge cases and error conditions
+- Don't test framework code
+
+**4. CI/CD Benefits**
+- Catch bugs before merging
+- Multi-platform compatibility verification
+- Automated code quality enforcement
+- Confidence in refactoring
+
+**5. Pre-commit Hooks Save Time**
+- Catch issues before commit
+- Auto-format code
+- Run quick tests locally
+- Prevent broken commits
+
+#### Exercises
+
+**Exercise 1: Add a New Test**
+Write a test for detecting functions with too many parameters (>5).
+
+**Exercise 2: Achieve 90% Coverage**
+Identify uncovered lines and write tests for them.
+
+**Exercise 3: Create a Custom Pre-commit Hook**
+Add a hook that prevents committing debug print statements.
+
+**Exercise 4: Add Codecov Badge**
+Set up Codecov integration and add badge to README.
 
 ---
 

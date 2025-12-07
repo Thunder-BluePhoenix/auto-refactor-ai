@@ -12,51 +12,131 @@ auto-refactor-ai/
 ├── auto_refactor_ai/          # Main package
 │   ├── __init__.py            # Package initialization, exports main()
 │   ├── __main__.py            # Entry point for python -m auto_refactor_ai
-│   ├── analyzer.py            # Core analysis logic
-│   └── cli.py                 # Command-line interface
+│   ├── analyzer.py            # Core analysis logic (V0-V4)
+│   ├── cli.py                 # Command-line interface (V0-V4)
+│   └── config.py              # Configuration management (V2+)
+│
+├── tests/                     # Test suite (V4+) - 60 tests, 88% coverage
+│   ├── __init__.py           # Test package initialization
+│   ├── test_analyzer.py      # 26 tests - Core analysis tests
+│   ├── test_config.py        # 22 tests - Configuration tests
+│   └── test_cli.py           # 12 tests - CLI interface tests
+│
+├── test_files/               # Sample files for manual testing
+│   ├── README.md             # Test files documentation
+│   ├── test_perfect_code.py  # Examples of good code
+│   ├── test_length_issues.py # Function length test cases
+│   ├── test_parameter_issues.py
+│   ├── test_nesting_issues.py
+│   ├── test_combined_issues.py
+│   └── test_edge_cases.py
 │
 ├── docs/                      # Documentation
+│   ├── README.md             # Documentation index
 │   ├── ROADMAP.md            # Full version roadmap
 │   ├── ARCHITECTURE.md       # This file
 │   ├── LEARNING_GUIDE.md     # Educational content
 │   ├── API_REFERENCE.md      # Code documentation
-│   ├── versions/             # Version-specific guides
-│   └── learning/             # Learning materials
+│   ├── PROJECT_OVERVIEW.md   # High-level overview
+│   ├── PUBLISHING_GUIDE.md   # PyPI publishing guide
+│   └── versions/             # Version-specific guides
+│       ├── V0_GUIDE.md
+│       ├── V1_GUIDE.md
+│       ├── V2_GUIDE.md
+│       ├── V3_GUIDE.md
+│       └── V4_GUIDE.md
 │
-├── tests/                     # Test suite (V4+)
-│   ├── test_analyzer.py
-│   ├── test_rules.py
-│   └── test_cli.py
+├── .github/                   # GitHub configuration (V4+)
+│   └── workflows/
+│       └── test.yml          # CI/CD pipeline
 │
-├── pyproject.toml            # Package metadata & dependencies
+├── examples/                  # Example configurations (V2+)
+│   ├── config-strict.toml
+│   └── config-relaxed.toml
+│
+├── scripts/                   # Utility scripts (V3+)
+│   └── verify_install.py     # Installation verification
+│
+├── .pre-commit-config.yaml   # Pre-commit hooks (V4+)
+├── pyproject.toml            # Package metadata & all tool configs
+├── CHANGELOG.md              # Version history
+├── LICENSE                   # MIT License (V3+)
+├── MANIFEST.in               # Distribution file control (V3+)
 ├── README.md                 # Main documentation
-├── QUICKSTART.md            # Quick start guide
-├── sample_test.py           # Sample file for testing
 └── .gitignore               # Git ignore patterns
 ```
 
 ---
 
-## 🏗️ Core Components (V0)
+## 🏗️ Core Components
 
-### 1. `analyzer.py` - The Brain
+### Current Architecture (V4 - 0.4.0)
 
-**Purpose:** Analyze Python source code and detect issues.
+The project has evolved through four major versions, each adding significant functionality while maintaining backward compatibility.
 
-**Key Classes:**
+### 1. `analyzer.py` - The Analysis Engine
 
-#### `FunctionIssue` (dataclass)
-Represents a single code issue found during analysis.
+**Purpose:** Core analysis logic with multiple rules and severity levels.
+
+**Key Classes (V1+):**
+
+#### `Severity` (Enum)
+Severity classification for issues.
+
+```python
+class Severity(Enum):
+    INFO = "INFO"          # 1-1.5x over limit
+    WARN = "WARN"          # 1.5-2x over limit
+    CRITICAL = "CRITICAL"  # 2x+ over limit
+```
+
+#### `Issue` (dataclass)
+Represents a single code issue (renamed from `FunctionIssue` in V1).
 
 ```python
 @dataclass
-class FunctionIssue:
+class Issue:
+    severity: Severity     # Issue severity level
     file: str              # Path to file
     function_name: str     # Name of the function
     start_line: int        # Starting line number
     end_line: int          # Ending line number
-    length: int            # Number of lines
+    rule_name: str         # Rule that detected this issue
     message: str           # Human-readable description
+    details: dict = None   # Additional metadata
+
+    def to_dict(self) -> dict:
+        """Serialize to dictionary for JSON output."""
+        return {
+            "severity": self.severity.value,
+            "file": self.file,
+            "function_name": self.function_name,
+            "start_line": self.start_line,
+            "end_line": self.end_line,
+            "rule_name": self.rule_name,
+            "message": self.message,
+            "details": self.details or {}
+        }
+```
+
+#### `NestingVisitor` (ast.NodeVisitor)
+AST visitor for calculating nesting depth.
+
+```python
+class NestingVisitor(ast.NodeVisitor):
+    """Visitor to calculate maximum nesting depth in a function."""
+
+    def __init__(self):
+        self.current_depth = 0
+        self.max_depth = 0
+
+    def visit_If(self, node):
+        self.current_depth += 1
+        self.max_depth = max(self.max_depth, self.current_depth)
+        self.generic_visit(node)
+        self.current_depth -= 1
+
+    # Similar for For, While, With, Try, etc.
 ```
 
 **Key Functions:**
@@ -387,27 +467,165 @@ class OpenAIProvider(LLMProvider):
 
 ## 🧪 Testing Architecture (V4)
 
+### Test Suite Overview
+
+**Statistics:**
+- **Total Tests:** 60
+- **Coverage:** 88% (exceeds 80% requirement)
+- **Test Modules:** 3 (analyzer, config, CLI)
+- **Test Classes:** 19
+- **CI/CD:** GitHub Actions on 15 combinations (3 OS × 5 Python versions)
+
 **Test Structure:**
 ```
 tests/
-├── fixtures/              # Sample Python files for testing
-│   ├── long_function.py
-│   ├── many_params.py
-│   └── deep_nesting.py
+├── __init__.py                # Test package initialization
+├── test_analyzer.py          # 26 tests - Core analysis engine
+│   ├── TestSeverity          # Severity enum tests
+│   ├── TestIssue             # Issue dataclass tests
+│   ├── TestNestingVisitor    # AST visitor tests
+│   ├── TestCheckFunctionLength
+│   ├── TestCheckTooManyParameters
+│   ├── TestCheckDeepNesting
+│   └── TestAnalyzeFile       # Integration tests
 │
-├── test_analyzer.py      # Core logic tests
-├── test_rules.py         # Individual rule tests
-├── test_cli.py           # CLI integration tests
-└── test_config.py        # Config loading tests
+├── test_config.py            # 22 tests - Configuration system
+│   ├── TestConfig            # Config dataclass tests
+│   ├── TestParseSimpleToml   # TOML parser tests
+│   ├── TestLoadTomlConfig    # TOML file loading
+│   ├── TestFindConfigFile    # Config discovery
+│   └── TestLoadConfig        # Full integration
+│
+└── test_cli.py               # 12 tests - CLI interface
+    ├── TestPrintIssues       # Text output formatting
+    ├── TestPrintSummary      # Summary statistics
+    ├── TestPrintJson         # JSON output
+    └── TestMainCLI           # Full CLI integration
 ```
 
-**Example Test:**
+### Testing Patterns
+
+**Arrange-Act-Assert Pattern:**
 ```python
-def test_detect_long_function():
-    issues = analyze_file("tests/fixtures/long_function.py", max_function_length=20)
-    assert len(issues) == 1
-    assert issues[0].function_name == "very_long_function"
-    assert issues[0].length > 20
+def test_function_over_limit_critical(self):
+    """Test function way over limit (CRITICAL)."""
+    # Arrange - Create test code
+    code = "def long():\n" + "    x = 1\n" * 68 + "    return x"
+
+    # Act - Parse and analyze
+    tree = ast.parse(code)
+    func = tree.body[0]
+    issue = check_function_length(func, "test.py", max_length=30)
+
+    # Assert - Verify results
+    assert issue is not None
+    assert issue.severity == Severity.CRITICAL
+    assert issue.details["actual_length"] == 70
+```
+
+**Fixture Usage:**
+```python
+@pytest.fixture
+def temp_config_file():
+    """Create temporary config file for testing."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
+        f.write("max_function_length = 40\n")
+        f.flush()
+        yield Path(f.name)
+    Path(f.name).unlink()
+```
+
+**Mocking for CLI Tests:**
+```python
+def test_main_with_help(self):
+    """Test running with --help flag."""
+    with patch("sys.argv", ["auto-refactor-ai", "--help"]):
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 0
+```
+
+### Coverage Report
+
+```
+Name                           Stmts   Miss  Cover   Missing
+------------------------------------------------------------
+auto_refactor_ai/__init__.py       2      0   100%
+auto_refactor_ai/__main__.py       1      1     0%   1
+auto_refactor_ai/analyzer.py     110      2    98%   121, 158
+auto_refactor_ai/cli.py           74      3    96%   60, 96-97
+auto_refactor_ai/config.py       122     30    75%   55, 110, ...
+------------------------------------------------------------
+TOTAL                            309     36    88%
+```
+
+### CI/CD Pipeline
+
+**GitHub Actions Workflow:** `.github/workflows/test.yml`
+
+**Three Jobs:**
+
+1. **Multi-Platform Tests**
+   - Operating Systems: Ubuntu, Windows, macOS
+   - Python Versions: 3.8, 3.9, 3.10, 3.11, 3.12
+   - Total: 15 test combinations
+   - Coverage reporting to Codecov
+
+2. **Code Quality Checks**
+   - Black: Code formatting verification
+   - Ruff: Linting checks
+   - Mypy: Static type checking
+
+3. **Self-Analysis (Dogfooding)**
+   - Runs auto-refactor-ai on its own codebase
+   - Fails build if critical issues found
+   - Demonstrates confidence in the tool
+
+### Pre-commit Hooks
+
+**Configuration:** `.pre-commit-config.yaml`
+
+**Hooks Executed:**
+1. **General File Checks** (trailing whitespace, EOF, YAML/TOML validation)
+2. **Black** - Auto-format code
+3. **Ruff** - Lint with auto-fixes
+4. **Mypy** - Type checking
+5. **Self-Analysis** - Run auto-refactor-ai on changed files
+6. **Pytest** - Run test suite before commit
+
+### Code Quality Configuration
+
+All tools configured in `pyproject.toml`:
+
+**Pytest:**
+```toml
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "--verbose",
+    "--cov=auto_refactor_ai",
+    "--cov-fail-under=80",
+]
+```
+
+**Black:**
+```toml
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+```
+
+**Ruff:**
+```toml
+[tool.ruff]
+select = ["E", "W", "F", "I", "N", "UP", "B", "C4"]
+```
+
+**Mypy:**
+```toml
+[tool.mypy]
+python_version = "3.8"
+check_untyped_defs = true
 ```
 
 ---
@@ -465,17 +683,26 @@ Display Results
 
 ## 🔧 Key Technologies
 
-| Technology | Purpose | Introduced |
-|------------|---------|------------|
-| `ast` | Parse Python code | V0 |
-| `argparse` | CLI argument parsing | V0 |
-| `pathlib` | Path operations | V0 |
-| `dataclasses` | Data structures | V0 |
-| `tomli` | TOML config parsing | V2 |
-| `pytest` | Testing | V4 |
-| `openai` / `anthropic` | LLM integration | V6 |
-| `difflib` | Generate patches | V7 |
-| `gitpython` | Git integration | V9 |
+| Technology | Purpose | Introduced | Status |
+|------------|---------|------------|--------|
+| `ast` | Parse Python code | V0 | ✅ Active |
+| `argparse` | CLI argument parsing | V0 | ✅ Active |
+| `pathlib` | Path operations | V0 | ✅ Active |
+| `dataclasses` | Data structures | V0 | ✅ Active |
+| `enum` | Severity levels | V1 | ✅ Active |
+| TOML parser (fallback) | Config file parsing | V2 | ✅ Active |
+| `json` | JSON output & config | V2 | ✅ Active |
+| `pytest` | Testing framework | V4 | ✅ Active |
+| `pytest-cov` | Coverage reporting | V4 | ✅ Active |
+| `black` | Code formatting | V4 | ✅ Active |
+| `ruff` | Fast linting | V4 | ✅ Active |
+| `mypy` | Type checking | V4 | ✅ Active |
+| `pre-commit` | Git hooks | V4 | ✅ Active |
+| `openai` / `anthropic` | LLM integration | V6 | 📅 Planned |
+| `difflib` | Generate patches | V7 | 📅 Planned |
+| `gitpython` | Git integration | V9 | 📅 Planned |
+
+**Zero Runtime Dependencies**: The core package uses only Python standard library. Development dependencies are optional (`pip install -e ".[dev]"`).
 
 ---
 

@@ -20,8 +20,11 @@ Welcome to the complete documentation for Auto Refactor AI!
 | Version | Document | Status |
 |---------|----------|--------|
 | V0 | [V0 Implementation Guide](versions/V0_GUIDE.md) | ✅ Complete |
-| V1 | [V1 Implementation Guide](versions/V1_GUIDE.md) | 📋 Planned |
-| V2-V12 | Coming soon | 📋 Planned |
+| V1 | [V1 Implementation Guide](versions/V1_GUIDE.md) | ✅ Complete |
+| V2 | [V2 Implementation Guide](versions/V2_GUIDE.md) | ✅ Complete |
+| V3 | [V3 Implementation Guide](versions/V3_GUIDE.md) | ✅ Complete |
+| V4 | [V4 Implementation Guide](versions/V4_GUIDE.md) | ✅ Complete |
+| V5-V12 | Coming soon | 📋 Planned |
 
 ---
 

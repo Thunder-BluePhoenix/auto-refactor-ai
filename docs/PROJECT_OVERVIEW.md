@@ -51,20 +51,23 @@ auto-refactor-ai/
 
 ## 📊 Current Status
 
-**Version:** V0 (Complete ✅)
+**Version:** V4 (v0.4.0) - Production Ready ✅
 
 **What Works:**
-- Single file analysis
-- Directory scanning (recursive)
-- Function length detection
-- Custom threshold configuration
-- Human-readable output
+- ✅ Multiple analysis rules (length, parameters, nesting)
+- ✅ Severity levels (INFO, WARN, CRITICAL)
+- ✅ Configuration files (TOML/YAML)
+- ✅ JSON output for CI/CD integration
+- ✅ Pip installable package
+- ✅ Comprehensive test suite (60 tests, 88% coverage)
+- ✅ GitHub Actions CI/CD (15 combinations)
+- ✅ Pre-commit hooks
+- ✅ Code quality tools (black, ruff, mypy)
 
 **What's Next:**
-- V1: Multiple rules (parameters, nesting, complexity)
-- V2: Config files & JSON output
-- V3: Pip package
-- V4: Tests & CI/CD
+- V5: Detailed explanations & best practices
+- V6: LLM-powered AI suggestions
+- V7: Auto-refactor mode
 - ... (see [Roadmap](ROADMAP.md))
 
 ---
