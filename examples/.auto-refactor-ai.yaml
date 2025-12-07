@@ -1,0 +1,16 @@
+# Auto Refactor AI Configuration File (YAML format)
+
+# Maximum allowed function length in lines
+max_function_length: 30
+
+# Maximum allowed number of parameters per function
+max_parameters: 5
+
+# Maximum allowed nesting depth
+max_nesting_depth: 3
+
+# List of enabled rules
+enabled_rules:
+  - function-too-long
+  - too-many-parameters
+  - deep-nesting

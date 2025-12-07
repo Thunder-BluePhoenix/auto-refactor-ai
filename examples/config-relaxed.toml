@@ -1,0 +1,7 @@
+# Relaxed configuration for legacy codebases
+
+max_function_length = 50
+max_parameters = 8
+max_nesting_depth = 5
+
+enabled_rules = ["function-too-long", "too-many-parameters", "deep-nesting"]

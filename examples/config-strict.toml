@@ -1,0 +1,7 @@
+# Strict configuration for high code quality standards
+
+max_function_length = 20
+max_parameters = 3
+max_nesting_depth = 2
+
+enabled_rules = ["function-too-long", "too-many-parameters", "deep-nesting"]
