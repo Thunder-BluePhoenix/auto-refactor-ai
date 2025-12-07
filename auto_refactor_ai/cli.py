@@ -5,11 +5,12 @@ from pathlib import Path
 
 from .analyzer import analyze_file, Severity
 from .config import load_config, Config
+from .explanations import get_explanation, format_explanation, get_severity_guidance
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Auto Refactor AI – Static analyzer for Python code quality (V2)"
+        description="Auto Refactor AI – Static analyzer with detailed explanations (V5)"
     )
     parser.add_argument(
         "path",
@@ -45,6 +46,16 @@ def main():
         default="text",
         help="Output format: 'text' (human-readable) or 'json' (machine-readable). Default: text",
     )
+    parser.add_argument(
+        "--explain",
+        action="store_true",
+        help="Show detailed explanations for each issue with examples and refactoring guidance (V5)",
+    )
+    parser.add_argument(
+        "--explain-summary",
+        action="store_true",
+        help="Show brief explanations for each issue (V5)",
+    )
 
     args = parser.parse_args()
 
@@ -73,7 +84,16 @@ def main():
     if args.format == "json":
         print_json(issues, config)
     else:
-        print_issues(issues)
+        # Check if explanations are requested
+        if args.explain or args.explain_summary:
+            print_issues_with_explanations(
+                issues,
+                verbose=args.explain,
+                summary=args.explain_summary
+            )
+        else:
+            print_issues(issues)
+
         if target_path.is_dir():
             print_summary(issues)
 
@@ -128,6 +148,41 @@ def print_issues(issues):
             f"\n{severity_label} {issue.file}:{issue.start_line}-{issue.end_line}  {issue.function_name}()"
         )
         print(f"  - {issue.message}")
+
+
+def print_issues_with_explanations(issues, verbose=True, summary=False):
+    """Print issues with detailed explanations (V5).
+
+    Args:
+        issues: List of issues to print
+        verbose: If True, show full explanations with examples
+        summary: If True, show brief explanations only
+    """
+    if not issues:
+        print("\n✓ No issues found! Your code looks good.\n")
+        return
+
+    # Sort by severity
+    severity_order = {Severity.CRITICAL: 0, Severity.WARN: 1, Severity.INFO: 2}
+    sorted_issues = sorted(
+        issues,
+        key=lambda x: (severity_order[x.severity], x.file, x.start_line)
+    )
+
+    print("\n" + "="*80)
+    print(f"Found {len(issues)} issue(s) with detailed explanations")
+    print("="*80 + "\n")
+
+    for i, issue in enumerate(sorted_issues, 1):
+        explanation = get_explanation(issue)
+
+        # Print detailed explanation
+        print(format_explanation(issue, explanation, verbose=verbose and not summary))
+
+        # Add severity guidance for critical/warning issues
+        if issue.severity in (Severity.CRITICAL, Severity.WARN) and verbose:
+            print(get_severity_guidance(issue.severity).strip())
+            print("\n" + "="*80 + "\n")
 
 
 def print_summary(issues):
