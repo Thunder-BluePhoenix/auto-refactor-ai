@@ -2,6 +2,53 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V5] - 2025-12-08
+
+### Added
+- **Detailed Explanations System**
+  - New `explanations.py` module (374 lines) with comprehensive explanation templates
+  - `Explanation` dataclass with structured fields for why/how/examples
+  - Pre-defined explanations for all 3 rules with educational content
+
+- **New CLI Flags**
+  - `--explain` flag for detailed explanations with full examples
+  - `--explain-summary` flag for brief explanations (quick tips)
+  - Severity-specific guidance for CRITICAL/WARN/INFO issues
+
+- **Educational Content**
+  - "Why it matters" sections explaining the impact of each issue
+  - "How to fix" step-by-step guidance (5 steps per rule)
+  - Good vs Bad code examples for each rule
+  - References to Clean Code, Refactoring Guru, and design patterns
+
+- **Rule Explanations**
+  - **Function Too Long**: SRP, Extract Method, cognitive overload
+  - **Too Many Parameters**: Parameter Object, Builder Pattern
+  - **Deep Nesting**: Guard clauses, early returns, Strategy Pattern
+
+- **New Tests**
+  - `tests/test_explanations.py` with 15 comprehensive tests
+  - Tests for getting explanations, formatting, severity guidance
+  - Quality validation tests for explanation content
+  - Total test count: 75 (up from 60)
+
+### Changed
+- Updated version to 0.5.0
+- CLI description updated to "V5" with detailed explanations
+- CLI now respects `--explain` and `--explain-summary` flags
+
+### Documentation
+- `docs/versions/V5_GUIDE.md` - Complete V5 implementation guide
+- `V5_COMPLETION_SUMMARY.md` - Summary of all V5 achievements
+
+### Learning Outcomes
+- Good error message design principles
+- Refactoring theory (DRY, SRP, cohesion)
+- Documentation practices with examples
+- Progressive disclosure (verbose vs summary)
+
+---
+
 ## [V4] - 2025-12-08
 
 ### Added
