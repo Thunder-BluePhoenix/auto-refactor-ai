@@ -759,6 +759,98 @@ def auto_refactor(
 
 ---
 
+---
+
+## 📦 Module: `auto_refactor_ai.project_analyzer` (V8)
+
+**Added in V8 (0.8.0)**
+
+Project-level analysis module for detecting cross-file patterns and duplicates.
+
+### Class: `FunctionSignature`
+
+```python
+@dataclass
+class FunctionSignature:
+    file: str           # Path to the file
+    name: str           # Function name
+    start_line: int     # Start line number
+    end_line: int       # End line number
+    parameters: List[str] # List of parameter names
+    body_hash: str      # MD5 hash of normalized AST
+    parameter_count: int
+    line_count: int
+
+    @property
+    def location(self) -> str: ...
+    @property
+    def qualified_name(self) -> str: ...
+```
+
+---
+
+### Class: `DuplicateGroup`
+
+```python
+@dataclass
+class DuplicateGroup:
+    functions: List[FunctionSignature]
+    similarity: float       # 0.0 to 1.0
+    suggested_name: str     # Suggested name for consolidated function
+    suggested_module: str   # Suggested module path for extraction
+
+    @property
+    def count(self) -> int: ...
+    @property
+    def files(self) -> Set[str]: ...
+    @property
+    def potential_savings(self) -> int: ...
+```
+
+---
+
+### Class: `ProjectAnalysis`
+
+```python
+@dataclass
+class ProjectAnalysis:
+    root_path: str
+    files_analyzed: int
+    functions_found: int
+    duplicates: List[DuplicateGroup]
+    recommendations: List[str]
+```
+
+---
+
+### Function: `find_duplicates`
+
+```python
+def find_duplicates(
+    functions: List[FunctionSignature],
+    threshold: float = 0.8,
+    min_lines: int = 5
+) -> List[DuplicateGroup]:
+    """Find duplicate/similar functions in a list of signatures."""
+    ...
+```
+
+---
+
+### Function: `analyze_project`
+
+```python
+def analyze_project(
+    root_path: str,
+    min_lines: int = 5,
+    similarity_threshold: float = 0.8
+) -> ProjectAnalysis:
+    """Analyze a project directory for duplicates and patterns."""
+    ...
+```
+
+---
+
 ## 📊 Constants
 
 ```python

@@ -177,6 +177,36 @@ class TestFindDuplicates:
         assert len(duplicates) == 0
 
 
+    def test_suggest_module_mixed_dirs(self):
+        """Test suggesting module when functions are in different directories."""
+        from auto_refactor_ai.project_analyzer import _suggest_module
+        functions = [
+            FunctionSignature(
+                file="dir1/a.py", name="f1", start_line=1, end_line=10,
+                parameters=[], body_hash="abc",
+                parameter_count=0, line_count=10
+            ),
+            FunctionSignature(
+                file="dir2/b.py", name="f2", start_line=1, end_line=10,
+                parameters=[], body_hash="abc",
+                parameter_count=0, line_count=10
+            ),
+        ]
+        
+        module = _suggest_module(functions)
+        assert module.endswith("shared.py")
+
+    def test_find_common_words_no_common(self):
+        """Test finding common words when there are none."""
+        from auto_refactor_ai.project_analyzer import _find_common_words
+        words = _find_common_words(["create_user", "delete_post"])
+        assert words == []
+
+    def test_find_common_words_empty(self):
+        """Test finding common words with empty list."""
+        from auto_refactor_ai.project_analyzer import _find_common_words
+        assert _find_common_words([]) == []
+
 class TestDuplicateGroup:
     """Test DuplicateGroup properties."""
 
