@@ -408,15 +408,6 @@ auto-refactor-ai . --plan --ai-suggestions  # With LLM advice
 - [x] Add LLM integration for insights
 - [x] Generate HTML reports
 - [x] 289 tests, 87% coverage
-- LLM for planning
-- Report generation
-
-**Implementation Tasks:**
-- [ ] Build metrics aggregator
-- [ ] Implement priority ranking
-- [ ] Create plan generator
-- [ ] Add LLM integration for insights
-- [ ] Generate HTML reports
 
 ---
 
