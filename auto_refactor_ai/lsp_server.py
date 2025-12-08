@@ -208,7 +208,9 @@ def _register_features(server: AutoRefactorLanguageServer):
         """Handle document open - publish diagnostics."""
         doc = params.text_document
         diagnostics = server.get_diagnostics(doc.uri, doc.text)
-        server.publish_diagnostics(doc.uri, diagnostics)
+        doc = params.text_document
+        diagnostics = server.get_diagnostics(doc.uri, doc.text)
+        server.publish_diagnostics(doc.uri, diagnostics)  # type: ignore[attr-defined]
 
     @server.feature(lsp.TEXT_DOCUMENT_DID_SAVE)
     def did_save(params: lsp.DidSaveTextDocumentParams):
@@ -216,7 +218,9 @@ def _register_features(server: AutoRefactorLanguageServer):
         uri = params.text_document.uri
         doc = server.workspace.get_text_document(uri)
         diagnostics = server.get_diagnostics(uri, doc.source)
-        server.publish_diagnostics(uri, diagnostics)
+        doc = server.workspace.get_text_document(uri)
+        diagnostics = server.get_diagnostics(uri, doc.source)
+        server.publish_diagnostics(uri, diagnostics)  # type: ignore[attr-defined]
 
     @server.feature(lsp.TEXT_DOCUMENT_DID_CHANGE)
     def did_change(params: lsp.DidChangeTextDocumentParams):
@@ -224,13 +228,16 @@ def _register_features(server: AutoRefactorLanguageServer):
         uri = params.text_document.uri
         doc = server.workspace.get_text_document(uri)
         diagnostics = server.get_diagnostics(uri, doc.source)
-        server.publish_diagnostics(uri, diagnostics)
+        doc = server.workspace.get_text_document(uri)
+        diagnostics = server.get_diagnostics(uri, doc.source)
+        server.publish_diagnostics(uri, diagnostics)  # type: ignore[attr-defined]
 
     @server.feature(lsp.TEXT_DOCUMENT_CODE_ACTION)
     def code_action(params: lsp.CodeActionParams) -> List[lsp.CodeAction]:
         """Provide code actions (quick fixes) for diagnostics."""
         uri = params.text_document.uri
-        return server.get_code_actions(uri, params.context.diagnostics)
+        uri = params.text_document.uri
+        return server.get_code_actions(uri, list(params.context.diagnostics))
 
     @server.feature(lsp.TEXT_DOCUMENT_HOVER)
     def hover(params: lsp.HoverParams) -> Optional[lsp.Hover]:
