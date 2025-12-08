@@ -324,3 +324,32 @@ max_nesting_depth = 1
         finally:
             Path(test_path).unlink()
             Path(config_path).unlink()
+
+    def test_main_with_ai_suggestions(self, capsys):
+        """Test running with --ai-suggestions flag."""
+        # Create code with issues (too many parameters)
+        code = "def func(a, b, c, d, e, f, g): pass"
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+            f.write(code)
+            temp_path = f.name
+
+        try:
+            with patch("sys.argv", ["auto-refactor-ai", temp_path, "--ai-suggestions"]):
+                with patch("auto_refactor_ai.ai_suggestions.get_ai_suggestions") as mock_get:
+                    with patch("auto_refactor_ai.ai_suggestions.print_ai_suggestions") as mock_print:
+                        mock_get.return_value = "Summary"
+                        main()
+
+                        mock_get.assert_called_once()
+                        mock_print.assert_called_once()
+
+            # Test with auto-apply
+            with patch("sys.argv", ["auto-refactor-ai", temp_path, "--ai-suggestions", "--apply"]):
+                with patch("auto_refactor_ai.ai_suggestions.get_ai_suggestions") as mock_get:
+                    with patch("auto_refactor_ai.cli.handle_auto_refactor") as mock_handle:
+                        mock_get.return_value = "Summary"
+                        main()
+                        mock_handle.assert_called_once()
+
+        finally:
+            Path(temp_path).unlink()

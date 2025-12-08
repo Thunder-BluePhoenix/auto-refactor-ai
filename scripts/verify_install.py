@@ -4,9 +4,9 @@ Verification script to test auto-refactor-ai installation.
 Run after installing the package.
 """
 
-import sys
-import subprocess
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 
@@ -15,9 +15,9 @@ def test_import():
     print("Test 1: Checking imports...")
     try:
         import auto_refactor_ai
-        from auto_refactor_ai.analyzer import analyze_file, Issue, Severity
-        from auto_refactor_ai.config import load_config, Config
+        from auto_refactor_ai.analyzer import Issue, Severity, analyze_file
         from auto_refactor_ai.cli import main
+        from auto_refactor_ai.config import Config, load_config
         print("  ✅ All imports successful")
         return True
     except ImportError as e:
@@ -125,7 +125,7 @@ def test_config_loading():
     """Test 5: Test config file loading."""
     print("\nTest 5: Testing config loading...")
     try:
-        from auto_refactor_ai.config import load_config, Config
+        from auto_refactor_ai.config import Config, load_config
 
         # Test default config
         config = load_config(None)

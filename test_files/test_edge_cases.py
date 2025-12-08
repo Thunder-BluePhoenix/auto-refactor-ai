@@ -109,7 +109,7 @@ def function_with_exception_handling(data):
         for item in data:  # Level 1
             if item > 0:  # Level 2
                 result.append(item * 2)
-    except Exception as e:
+    except Exception:
         return []
     return result
 

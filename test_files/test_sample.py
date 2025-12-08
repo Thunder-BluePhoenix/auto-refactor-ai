@@ -52,7 +52,7 @@ def long_function_with_nesting(data, threshold, multiplier, offset, debug_mode, 
                     processed = 1000
                     # Line 19
                     if debug_mode:  # Level 5
-                        print(f"Capping value at 1000")
+                        print("Capping value at 1000")
                 # Line 22
                 results.append(processed)
             # Line 24

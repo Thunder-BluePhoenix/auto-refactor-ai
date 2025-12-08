@@ -73,6 +73,41 @@ def bar(a, b):
 
         assert hash1 != hash2
 
+    def test_normalize_function_docstring(self):
+        """Test proper normalization of sync functions including docstring removal."""
+        code = """
+def my_func():
+    "Docstring"
+    return 1
+"""
+        tree = ast.parse(code)
+        func = tree.body[0]
+        normalized = normalize_ast(func)
+        assert "Docstring" not in normalized
+
+    def test_normalize_string_constant(self):
+        """Test normalization of string constants."""
+        code = "x = 'hello'"
+        tree = ast.parse(code)
+        normalized = normalize_ast(tree)
+        assert "hello" not in normalized
+        assert "str_const" in normalized
+
+    def test_normalize_async_function_docstring(self):
+        """Test proper normalization of async functions including docstring removal."""
+        code = """
+async def my_async_func():
+    "Async docstring"
+    await something()
+"""
+        tree = ast.parse(code)
+        func = tree.body[0]
+        normalized = normalize_ast(func)
+
+        # Should normalize name and remove docstring
+        assert "normalized_func" in normalized
+        assert "Async docstring" not in normalized
+
 
 class TestExtractFunctions:
     """Test function extraction."""
@@ -241,9 +276,14 @@ class TestFindDuplicates:
 
     def test_find_common_words_empty(self):
         """Test finding common words with empty list."""
+
+    def test_find_common_words_camel_case(self):
+        """Test finding common words with CamelCase."""
         from auto_refactor_ai.project_analyzer import _find_common_words
 
-        assert _find_common_words([]) == []
+        words = _find_common_words(["ProcessUser", "ProcessOrder"])
+        assert "process" in words
+
 
 
 class TestDuplicateGroup:
@@ -272,24 +312,25 @@ class TestDuplicateGroup:
                 parameter_count=0,
                 line_count=10,
             ),
-            FunctionSignature(
-                file="c.py",
-                name="f3",
-                start_line=1,
-                end_line=10,
-                parameters=[],
-                body_hash="abc",
-                parameter_count=0,
-                line_count=10,
-            ),
         ]
 
         group = DuplicateGroup(functions=functions, similarity=1.0)
+        assert group.potential_savings == 10  # 20 - 10 = 10
 
-        # 3 functions * 10 lines = 30 total
-        # Could be consolidated to ~10 lines
-        # Savings = 30 - 10 = 20
-        assert group.potential_savings == 20
+        # Test single function (no savings)
+        single_group = DuplicateGroup(functions=[functions[0]], similarity=1.0)
+        assert single_group.potential_savings == 0
+
+    def test_files_property(self):
+        """Test files set property."""
+        functions = [
+            FunctionSignature(file="a.py", name="f1", start_line=1, end_line=1, parameters=[], body_hash="a", parameter_count=0, line_count=1),
+            FunctionSignature(file="a.py", name="f2", start_line=2, end_line=2, parameters=[], body_hash="a", parameter_count=0, line_count=1),
+            FunctionSignature(file="b.py", name="f3", start_line=1, end_line=1, parameters=[], body_hash="a", parameter_count=0, line_count=1),
+        ]
+        group = DuplicateGroup(functions=functions, similarity=1.0)
+        assert group.files == {"a.py", "b.py"}
+
 
 
 class TestProjectAnalysis:
@@ -337,6 +378,27 @@ def bar():
 
             assert analysis.files_analyzed == 1
             assert analysis.functions_found == 2
+
+    def test_project_analysis_properties(self):
+        """Test ProjectAnalysis properties with real objects."""
+        # Group 1: 2 functions of 10 lines
+        f1 = FunctionSignature("a.py", "f1", 1, 10, [], "h1", 0, 10)
+        f2 = FunctionSignature("b.py", "f2", 1, 10, [], "h1", 0, 10)
+        g1 = DuplicateGroup([f1, f2], 1.0) # savings = 10
+
+        # Group 2: 3 functions of 5 lines
+        f3 = FunctionSignature("c.py", "f3", 1, 5, [], "h2", 0, 5)
+        f4 = FunctionSignature("d.py", "f4", 1, 5, [], "h2", 0, 5)
+        f5 = FunctionSignature("e.py", "f5", 1, 5, [], "h2", 0, 5)
+        g2 = DuplicateGroup([f3, f4, f5], 1.0) # savings = 10
+
+        analysis = ProjectAnalysis(
+            root_path=".",
+            duplicates=[g1, g2]
+        )
+
+        assert analysis.duplicate_count == 5
+        assert analysis.potential_savings == 20
 
 
 class TestFormatProjectAnalysis:

@@ -1,5 +1,6 @@
 """Tests for git_utils module (V9)."""
 
+import subprocess
 from unittest.mock import MagicMock, patch
 
 from auto_refactor_ai.git_utils import get_changed_files, is_git_repo
@@ -74,3 +75,16 @@ class TestGitUtils:
         """Test returns empty if not a repo."""
         mock_is_git.return_value = False
         assert get_changed_files(".") == []
+
+    @patch("subprocess.run")
+    def test_get_changed_files_error(self, mock_run, tmp_path):
+        """Test error handling when git command fails."""
+        # First call checks is_git_repo (success)
+        # Second call runs git diff (fails)
+        mock_run.side_effect = [
+            MagicMock(returncode=0),  # is_git_repo
+            subprocess.CalledProcessError(1, "git diff"),  # git diff
+        ]
+
+        files = get_changed_files(str(tmp_path))
+        assert files == []

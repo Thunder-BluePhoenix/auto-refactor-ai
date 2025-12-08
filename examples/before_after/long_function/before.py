@@ -11,7 +11,7 @@ def process_order(order_id, customer_data, items, shipping_info, payment_info,
         raise ValueError("Customer data required")
     if not items:
         raise ValueError("Items required")
-    
+
     # Calculate totals
     subtotal = 0
     for item in items:
@@ -19,7 +19,7 @@ def process_order(order_id, customer_data, items, shipping_info, payment_info,
         if item.get('taxable'):
             item_price *= 1.08
         subtotal += item_price
-    
+
     # Apply discount
     discount = 0
     if discount_code:
@@ -29,19 +29,19 @@ def process_order(order_id, customer_data, items, shipping_info, payment_info,
             discount = subtotal * 0.20
         elif discount_code == 'FREESHIP':
             shipping_info['cost'] = 0
-    
+
     # Calculate shipping
     shipping_cost = shipping_info.get('cost', 5.99)
     if subtotal > 100:
         shipping_cost = 0
-    
+
     # Add gift wrap
     if gift_wrap:
         shipping_cost += 3.99
-    
+
     # Calculate final total
     total = subtotal - discount + shipping_cost
-    
+
     # Process payment
     if payment_info['type'] == 'credit':
         # credit card processing
@@ -51,7 +51,7 @@ def process_order(order_id, customer_data, items, shipping_info, payment_info,
         result = process_paypal(payment_info['email'], total)
     else:
         raise ValueError("Unknown payment type")
-    
+
     # Create order record
     order = {
         'id': order_id,
@@ -63,14 +63,14 @@ def process_order(order_id, customer_data, items, shipping_info, payment_info,
         'total': total,
         'status': 'processed'
     }
-    
+
     # Save to database
     save_order(order)
-    
+
     # Send notifications
     if notify:
         send_email(customer_data['email'], 'Order Confirmed', f'Order {order_id}')
         if shipping_info.get('tracking'):
             send_sms(customer_data['phone'], f'Tracking: {shipping_info["tracking"]}')
-    
+
     return order

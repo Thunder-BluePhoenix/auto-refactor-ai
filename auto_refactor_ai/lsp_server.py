@@ -40,8 +40,7 @@ def check_pygls_available():
     """Check if pygls is available, raise error if not."""
     if not HAS_PYGLS:
         raise ImportError(
-            "pygls is required for LSP support. "
-            "Install with: pip install auto-refactor-ai[lsp]"
+            "pygls is required for LSP support. " "Install with: pip install auto-refactor-ai[lsp]"
         )
 
 
@@ -126,6 +125,69 @@ class AutoRefactorLanguageServer(LanguageServer):
         )
 
 
+
+    def get_hover_info(self, uri: str, line: int) -> Optional[lsp.Hover]:
+        """Get hover information for a specific position."""
+        issues = self._diagnostics_cache.get(uri, [])
+
+        for issue in issues:
+            if issue.start_line - 1 <= line <= issue.end_line - 1:
+                explanation = get_explanation(issue)
+
+                # Build markdown content
+                content = f"## {explanation.title}\n\n"
+                content += f"**Why it matters:** {explanation.why_it_matters}\n\n"
+                content += "**How to fix:**\n"
+                for step in explanation.how_to_fix[:3]:
+                    content += f"- {step}\n"
+
+                return lsp.Hover(
+                    contents=lsp.MarkupContent(
+                        kind=lsp.MarkupKind.Markdown,
+                        value=content,
+                    )
+                )
+        return None
+
+    def get_code_actions(self, uri: str, diagnostics: List[lsp.Diagnostic]) -> List[lsp.CodeAction]:
+        """Get code actions for given diagnostics."""
+        actions = []
+        issues = self._diagnostics_cache.get(uri, [])
+
+        for diagnostic in diagnostics:
+            # Find matching issue
+            matching_issue = None
+            for issue in issues:
+                if (
+                    issue.start_line - 1 == diagnostic.range.start.line
+                    and issue.rule_name == diagnostic.code
+                ):
+                    matching_issue = issue
+                    break
+
+            if matching_issue:
+                explanation = get_explanation(matching_issue)
+                actions.append(
+                    lsp.CodeAction(
+                        title=f"💡 {explanation.title}",
+                        kind=lsp.CodeActionKind.QuickFix,
+                        diagnostics=[diagnostic],
+                        command=lsp.Command(
+                            title="Show Explanation",
+                            command="auto-refactor-ai.showExplanation",
+                            arguments=[
+                                {
+                                    "title": explanation.title,
+                                    "why": explanation.why_it_matters,
+                                    "how": explanation.how_to_fix,
+                                }
+                            ],
+                        ),
+                    )
+                )
+        return actions
+
+
 # Create server instance
 server: Optional[AutoRefactorLanguageServer] = None
 
@@ -166,86 +228,25 @@ def _register_features(server: AutoRefactorLanguageServer):
         diagnostics = server.get_diagnostics(uri, doc.source)
         server.publish_diagnostics(uri, diagnostics)
 
+
+
     @server.feature(lsp.TEXT_DOCUMENT_CODE_ACTION)
     def code_action(params: lsp.CodeActionParams) -> List[lsp.CodeAction]:
         """Provide code actions (quick fixes) for diagnostics."""
         uri = params.text_document.uri
-        actions = []
-
-        # Get cached issues for this file
-        issues = server._diagnostics_cache.get(uri, [])
-
-        for diagnostic in params.context.diagnostics:
-            # Find matching issue
-            matching_issue = None
-            for issue in issues:
-                if (
-                    issue.start_line - 1 == diagnostic.range.start.line
-                    and issue.rule_name == diagnostic.code
-                ):
-                    matching_issue = issue
-                    break
-
-            if matching_issue:
-                # Get explanation for the issue
-                explanation = get_explanation(matching_issue)
-
-                # Create "Show Explanation" action
-                actions.append(
-                    lsp.CodeAction(
-                        title=f"💡 {explanation.title}",
-                        kind=lsp.CodeActionKind.QuickFix,
-                        diagnostics=[diagnostic],
-                        command=lsp.Command(
-                            title="Show Explanation",
-                            command="auto-refactor-ai.showExplanation",
-                            arguments=[
-                                {
-                                    "title": explanation.title,
-                                    "why": explanation.why_it_matters,
-                                    "how": explanation.how_to_fix,
-                                }
-                            ],
-                        ),
-                    )
-                )
-
-        return actions
+        return server.get_code_actions(uri, params.context.diagnostics)
 
     @server.feature(lsp.TEXT_DOCUMENT_HOVER)
     def hover(params: lsp.HoverParams) -> Optional[lsp.Hover]:
         """Provide hover information for issues."""
         uri = params.text_document.uri
         line = params.position.line
-
-        # Find issue at this line
-        issues = server._diagnostics_cache.get(uri, [])
-
-        for issue in issues:
-            if issue.start_line - 1 <= line <= issue.end_line - 1:
-                explanation = get_explanation(issue)
-
-                # Build markdown content
-                content = f"## {explanation.title}\n\n"
-                content += f"**Why it matters:** {explanation.why_it_matters}\n\n"
-                content += "**How to fix:**\n"
-                for step in explanation.how_to_fix[:3]:
-                    content += f"- {step}\n"
-
-                return lsp.Hover(
-                    contents=lsp.MarkupContent(
-                        kind=lsp.MarkupKind.Markdown,
-                        value=content,
-                    )
-                )
-
-        return None
+        return server.get_hover_info(uri, line)
 
     @server.command("auto-refactor-ai.analyze")
     def analyze_command(params):
         """Command to manually trigger analysis."""
         logger.info("Manual analysis triggered")
-        # Could trigger full project analysis here
         return {"status": "ok"}
 
 
@@ -273,9 +274,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Auto Refactor AI Language Server")
-    parser.add_argument(
-        "--tcp", action="store_true", help="Use TCP transport instead of stdio"
-    )
+    parser.add_argument("--tcp", action="store_true", help="Use TCP transport instead of stdio")
     parser.add_argument("--host", default="127.0.0.1", help="TCP host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=2087, help="TCP port (default: 2087)")
 

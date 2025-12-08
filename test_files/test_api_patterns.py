@@ -5,7 +5,7 @@ def fetch_user_data(user_id, api_key, base_url, timeout, retry_count, headers):
     """Function with too many parameters - API call pattern."""
     # This is a common anti-pattern in API code
     import requests
-    
+
     for attempt in range(retry_count):
         try:
             response = requests.get(
@@ -45,14 +45,14 @@ def validate_api_request(
 ):
     """Too many parameters - should use a Request dataclass."""
     errors = []
-    
+
     if not request_body:
         errors.append("Missing request body")
     if not auth_token:
         errors.append("Missing auth token")
     if not ip_address:
         errors.append("Missing IP address")
-        
+
     return len(errors) == 0, errors
 
 
@@ -69,27 +69,27 @@ def build_complex_query(
 ):
     """Database query builder with too many parameters."""
     query_parts = [f"SELECT {', '.join(columns)} FROM {table}"]
-    
+
     if joins:
         for join in joins:
             query_parts.append(f"JOIN {join}")
-    
+
     if where_clause:
         query_parts.append(f"WHERE {where_clause}")
-    
+
     if group_by:
         query_parts.append(f"GROUP BY {group_by}")
-    
+
     if having:
         query_parts.append(f"HAVING {having}")
-    
+
     if order_by:
         query_parts.append(f"ORDER BY {order_by}")
-    
+
     if limit:
         query_parts.append(f"LIMIT {limit}")
-    
+
     if offset:
         query_parts.append(f"OFFSET {offset}")
-    
+
     return " ".join(query_parts)
