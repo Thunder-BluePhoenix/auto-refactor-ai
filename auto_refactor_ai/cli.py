@@ -13,7 +13,7 @@ def create_argument_parser():
     parser = argparse.ArgumentParser(
         description="Auto Refactor AI – Static analyzer with AI suggestions, auto-apply, project analysis, and git support (V9)"
     )
-    parser.add_argument("path", help="Python file or directory to analyze")
+    parser.add_argument("path", nargs="?", default=".", help="Python file or directory to analyze")
     parser.add_argument(
         "--max-len", type=int, default=None, help="Maximum allowed function length."
     )

@@ -88,15 +88,34 @@ This directory contains test files to validate the auto-refactor-ai analyzer.
   - Form validation with excessive nesting
 - **Expected Results**: Mix of WARN and CRITICAL issues
 
-### `test_modern_python.py` (V7+)
-- **Purpose**: Modern Python features testing
-- **Contains**:
-  - Async/await functions
-  - Type-hinted functions
-  - Dataclass methods
-  - Generator functions
-  - Context managers
-- **Expected Results**: Various parameter and nesting issues
+### test_modern_python.py (New - V7)
+- Modern Python 3.10+ features
+- Async/await patterns
+- Pattern matching
+- Dataclasses with complex logic
+
+---
+
+### test_api_patterns.py (New - V9)
+- API/web service anti-patterns
+- `fetch_user_data` - Too many parameters (6)
+- `process_webhook` - Deep nesting (5 levels)
+- `validate_api_request` - Too many parameters (7)
+- `build_complex_query` - 9 parameters, 37 lines
+
+### test_data_processing.py (New - V9)
+- ETL and analytics patterns
+- `calculate_statistics` - 62 lines (should be split)
+- `validate_record` - 7 levels of nesting
+- `parse_nested_config` - 5 levels of nesting
+
+### test_clean_code.py (New - V9)
+- **Clean code examples - NO issues expected**
+- Short, focused functions
+- Proper use of early returns
+- Well-structured class
+
+---
 
 ### `test_duplicates_a.py` (V8+)
 - **Purpose**: Duplicate detection testing
