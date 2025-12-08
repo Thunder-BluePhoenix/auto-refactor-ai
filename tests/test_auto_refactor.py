@@ -30,9 +30,9 @@ class TestGenerateDiff:
         """Test generating a simple diff."""
         original = "def foo():\n    pass\n"
         refactored = "def foo():\n    return 42\n"
-        
+
         diff = generate_diff(original, refactored, "test.py")
-        
+
         assert "--- a/test.py" in diff
         assert "+++ b/test.py" in diff
         assert "-    pass" in diff
@@ -41,9 +41,9 @@ class TestGenerateDiff:
     def test_no_changes(self):
         """Test diff when there are no changes."""
         code = "def foo():\n    pass\n"
-        
+
         diff = generate_diff(code, code, "test.py")
-        
+
         # No diff should be generated for identical code
         assert diff == ""
 
@@ -51,9 +51,9 @@ class TestGenerateDiff:
         """Test diff with multiple changes."""
         original = "def foo():\n    a = 1\n    b = 2\n    return a + b\n"
         refactored = "def foo():\n    return 1 + 2\n"
-        
+
         diff = generate_diff(original, refactored, "file.py")
-        
+
         assert "--- a/file.py" in diff
         assert "+++ b/file.py" in diff
 
@@ -67,11 +67,11 @@ class TestCreateBackup:
             # Create source file
             source = Path(tmpdir) / "source.py"
             source.write_text("original content")
-            
+
             # Create backup
             backup_dir = Path(tmpdir) / "backups"
             backup_path = create_backup(str(source), str(backup_dir))
-            
+
             # Verify backup exists and has correct content
             assert os.path.exists(backup_path)
             with open(backup_path) as f:
@@ -82,12 +82,12 @@ class TestCreateBackup:
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "source.py"
             source.write_text("content")
-            
+
             backup_dir = Path(tmpdir) / "new_backup_dir"
             assert not backup_dir.exists()
-            
+
             create_backup(str(source), str(backup_dir))
-            
+
             assert backup_dir.exists()
 
 
@@ -101,9 +101,9 @@ class TestApplyRefactoring:
             source = Path(tmpdir) / "test.py"
             original = "def foo():\n    pass\n"
             source.write_text(original)
-            
+
             refactored = "def foo():\n    return 42\n"
-            
+
             success, error = apply_refactoring(
                 str(source),
                 original,
@@ -111,7 +111,7 @@ class TestApplyRefactoring:
                 start_line=1,
                 end_line=2,
             )
-            
+
             assert success
             assert error is None
             assert source.read_text() == refactored
@@ -122,9 +122,9 @@ class TestApplyRefactoring:
             source = Path(tmpdir) / "test.py"
             original_content = "# Header\n\ndef foo():\n    pass\n\n# Footer\n"
             source.write_text(original_content)
-            
+
             refactored = "def foo():\n    return 42\n"
-            
+
             success, error = apply_refactoring(
                 str(source),
                 "def foo():\n    pass\n",
@@ -132,7 +132,7 @@ class TestApplyRefactoring:
                 start_line=3,
                 end_line=4,
             )
-            
+
             assert success
             content = source.read_text()
             assert "return 42" in content
@@ -150,13 +150,13 @@ class TestRollbackFile:
             original = Path(tmpdir) / "original.py"
             modified = Path(tmpdir) / "modified.py"
             backup = Path(tmpdir) / "backup.py"
-            
+
             original.write_text("original content")
             modified.write_text("modified content")
             backup.write_text("original content")
-            
+
             success, error = rollback_file(str(modified), str(backup))
-            
+
             assert success
             assert modified.read_text() == "original content"
 
@@ -165,9 +165,9 @@ class TestRollbackFile:
         with tempfile.TemporaryDirectory() as tmpdir:
             target = Path(tmpdir) / "target.py"
             target.write_text("content")
-            
+
             success, error = rollback_file(str(target), "/nonexistent/backup.py")
-            
+
             assert not success
             assert "not found" in error.lower()
 
@@ -186,7 +186,7 @@ class TestRefactorResult:
             end_line=1,
             applied=True,
         )
-        
+
         assert result.file_path == "test.py"
         assert result.function_name == "foo"
         assert result.applied
@@ -203,9 +203,9 @@ class TestRefactorSummary:
             RefactorResult("c.py", "f3", "", "", 1, 1, skipped=True),
             RefactorResult("d.py", "f4", "", "", 1, 1, error="failed"),
         ]
-        
+
         summary = RefactorSummary(results=results)
-        
+
         assert summary.total_count == 4
         assert summary.applied_count == 2
         assert summary.skipped_count == 1
@@ -228,9 +228,9 @@ class TestFormatDiffPreview:
             applied=True,
             backup_path="/backup/test.py",
         )
-        
+
         output = format_diff_preview(result)
-        
+
         assert "REFACTORING" in output
         assert "foo()" in output
         assert "Applied successfully" in output
@@ -247,9 +247,9 @@ class TestFormatDiffPreview:
             end_line=1,
             skipped=True,
         )
-        
+
         output = format_diff_preview(result)
-        
+
         assert "Skipped" in output
 
 
@@ -265,9 +265,9 @@ class TestFormatRefactorSummary:
             ],
             dry_run=True,
         )
-        
+
         output = format_refactor_summary(summary)
-        
+
         assert "DRY RUN" in output
         assert "No files were modified" in output
 
@@ -279,9 +279,9 @@ class TestFormatRefactorSummary:
             ],
             backup_dir=".backup",
         )
-        
+
         output = format_refactor_summary(summary)
-        
+
         assert "Backups saved to" in output
 
 
@@ -299,28 +299,28 @@ class TestProcessSingleRefactoring:
             rule_name="test-rule",
             message="Test message",
         )
-        
+
         suggestion = RefactoringSuggestion(
             original_code="def test_func(): pass",
             refactored_code="def test_func(): return 42",
             explanation="Added return",
             confidence=0.9,
         )
-        
+
         ai_result = AIAnalysisResult(
             issue=issue,
             suggestion=suggestion,
             original_function_code="def test_func(): pass",
         )
-        
+
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create the source file
             source = Path(tmpdir) / "test.py"
             source.write_text("def test_func(): pass\n")
             ai_result.issue.file = str(source)
-            
+
             result = process_single_refactoring(ai_result, dry_run=True)
-            
+
             assert not result.applied
             assert result.diff  # Should have generated diff
             assert source.read_text() == "def test_func(): pass\n"  # Not modified
@@ -334,7 +334,7 @@ class TestAutoRefactor:
         with tempfile.TemporaryDirectory() as tmpdir:
             source = Path(tmpdir) / "test.py"
             source.write_text("def foo():\n    pass\n")
-            
+
             issue = Issue(
                 severity=Severity.WARN,
                 file=str(source),
@@ -344,24 +344,24 @@ class TestAutoRefactor:
                 rule_name="test",
                 message="test",
             )
-            
+
             suggestion = RefactoringSuggestion(
                 original_code="def foo():\n    pass\n",
                 refactored_code="def foo():\n    return 42\n",
                 explanation="Added return",
                 confidence=0.9,
             )
-            
+
             ai_result = AIAnalysisResult(
                 issue=issue,
                 suggestion=suggestion,
                 original_function_code="def foo():\n    pass\n",
             )
-            
+
             ai_summary = AIAnalysisSummary(results=[ai_result])
-            
+
             summary = auto_refactor(ai_summary, dry_run=True)
-            
+
             assert summary.dry_run
             assert summary.total_count == 1
             assert source.read_text() == "def foo():\n    pass\n"  # Not modified
@@ -369,7 +369,7 @@ class TestAutoRefactor:
     def test_auto_refactor_empty_summary(self):
         """Test auto refactor with empty summary."""
         ai_summary = AIAnalysisSummary()
-        
+
         summary = auto_refactor(ai_summary, dry_run=True)
-        
+
         assert summary.total_count == 0

@@ -16,6 +16,7 @@ from typing import Optional, Dict, Any
 @dataclass
 class Config:
     """Configuration settings for the analyzer."""
+
     max_function_length: int = 30
     max_parameters: int = 5
     max_nesting_depth: int = 3
@@ -32,9 +33,7 @@ class Config:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Config":
         """Create config from dictionary."""
-        valid_keys = {
-            "max_function_length", "max_parameters", "max_nesting_depth", "enabled_rules"
-        }
+        valid_keys = {"max_function_length", "max_parameters", "max_nesting_depth", "enabled_rules"}
         filtered_data = {k: v for k, v in data.items() if k in valid_keys}
         return cls(**filtered_data)
 
@@ -48,6 +47,7 @@ def load_toml_config(path: Path) -> Optional[Dict[str, Any]]:
         # Python 3.11+ has built-in tomllib
         try:
             import tomllib
+
             with open(path, "rb") as f:
                 data = tomllib.load(f)
         except ImportError:
@@ -103,7 +103,7 @@ def _parse_simple_toml(path: Path) -> Dict[str, Any]:
                     value = value.lower() == "true"
                 elif value.startswith("[") and value.endswith("]"):
                     # Simple list parsing
-                    value = [v.strip().strip('"\'') for v in value[1:-1].split(",") if v.strip()]
+                    value = [v.strip().strip("\"'") for v in value[1:-1].split(",") if v.strip()]
                 elif value.startswith('"') and value.endswith('"'):
                     value = value[1:-1]
                 elif value.startswith("'") and value.endswith("'"):
@@ -130,6 +130,7 @@ def load_yaml_config(path: Path) -> Optional[Dict[str, Any]]:
     try:
         try:
             import yaml
+
             with open(path, "r", encoding="utf-8") as f:
                 return yaml.safe_load(f)
         except ImportError:
@@ -161,7 +162,11 @@ def find_config_file(start_path: Path = None) -> Optional[Path]:
     # Search upward through directories
     while True:
         # Check for dedicated config files
-        for filename in [".auto-refactor-ai.toml", ".auto-refactor-ai.yaml", ".auto-refactor-ai.yml"]:
+        for filename in [
+            ".auto-refactor-ai.toml",
+            ".auto-refactor-ai.yaml",
+            ".auto-refactor-ai.yml",
+        ]:
             config_path = current / filename
             if config_path.exists():
                 return config_path

@@ -340,7 +340,7 @@ def format_explanation(issue: Issue, explanation: Explanation, verbose: bool = T
             lines.append(f"  {i}. {step}")
         lines.append("")
 
-    lines.append("="*80 + "\n")
+    lines.append("=" * 80 + "\n")
 
     return "\n".join(lines)
 

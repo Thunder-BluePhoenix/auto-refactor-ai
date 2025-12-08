@@ -88,8 +88,12 @@ class TestAIAnalysisSummary:
 
         summary = AIAnalysisSummary(
             results=[
-                AIAnalysisResult(issue=issue, suggestion=successful_suggestion, original_function_code="code"),
-                AIAnalysisResult(issue=issue, suggestion=failed_suggestion, original_function_code="code"),
+                AIAnalysisResult(
+                    issue=issue, suggestion=successful_suggestion, original_function_code="code"
+                ),
+                AIAnalysisResult(
+                    issue=issue, suggestion=failed_suggestion, original_function_code="code"
+                ),
             ],
             provider="openai",
             model="gpt-4o-mini",

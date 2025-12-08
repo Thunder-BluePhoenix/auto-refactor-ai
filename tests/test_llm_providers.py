@@ -168,7 +168,6 @@ class TestOpenAIProvider:
             assert response.tokens_used == 100
 
 
-
 class TestAnthropicProvider:
     """Tests for Anthropic provider."""
 
