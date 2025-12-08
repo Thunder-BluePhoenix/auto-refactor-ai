@@ -1,39 +1,26 @@
-# Auto Refactor AI - VS Code Extension
+# Auto Refactor AI
 
-This VS Code extension provides real-time code analysis for Python files using the Auto Refactor AI analyzer.
+![Auto Refactor AI](https://img.shields.io/badge/auto--refactor--ai-v0.11.0-blue)
+
+AI-powered static analyzer for Python with real-time diagnostics and refactoring suggestions.
 
 ## Features
 
 - **Real-time Diagnostics**: See code quality issues as you type
-- **Quick Fixes**: Get actionable suggestions for each issue
-- **Hover Information**: See detailed explanations on hover
-- **Commands**: Manually trigger analysis
+- **Quick Fixes**: Code actions for common issues
+- **Hover Information**: Detailed explanations on hover
+- **Function Length**: Detect overly long functions
+- **Parameter Count**: Warn about too many parameters
+- **Nesting Depth**: Flag deeply nested code
 
 ## Requirements
 
-- Python 3.8+
-- Auto Refactor AI package installed with LSP support:
+- **Python 3.8+** with auto-refactor-ai installed:
   ```bash
   pip install auto-refactor-ai[lsp]
   ```
 
-## Installation
-
-### From Source
-
-1. Clone this repository
-2. Open in VS Code
-3. Run `npm install`
-4. Run `npm run compile`
-5. Press F5 to launch Extension Development Host
-
-### From VSIX (Coming Soon)
-
-```bash
-code --install-extension auto-refactor-ai-0.11.0.vsix
-```
-
-## Configuration
+## Extension Settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -44,30 +31,22 @@ code --install-extension auto-refactor-ai-0.11.0.vsix
 
 ## Usage
 
-1. Open a Python file
-2. Issues will appear as squiggly underlines
-3. Hover over an issue for explanation
-4. Use quick fixes (lightbulb) to see suggestions
+1. Open any Python file
+2. Issues appear as underlines (red=error, yellow=warning)
+3. Hover over issues for explanations
+4. Click the lightbulb for quick fixes
 
 ## Commands
 
-- `Auto Refactor AI: Analyze Current File` - Manually trigger analysis
+- **Auto Refactor AI: Analyze Current File** - Manually trigger analysis
 
-## Development
+## Release Notes
 
-```bash
-# Install dependencies
-npm install
-
-# Compile
-npm run compile
-
-# Watch mode
-npm run watch
-
-# Package
-vsce package
-```
+### 0.11.0
+- Initial release
+- Real-time diagnostics
+- Code actions and hover support
+- LSP integration
 
 ## License
 

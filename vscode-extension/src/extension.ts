@@ -10,8 +10,7 @@ import * as path from 'path';
 import {
     LanguageClient,
     LanguageClientOptions,
-    ServerOptions,
-    TransportKind
+    Executable
 } from 'vscode-languageclient/node';
 
 let client: LanguageClient | undefined;
@@ -24,20 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
     const pythonPath = config.get<string>('pythonPath', 'python');
 
     // Server options - start the Python LSP server
-    const serverOptions: ServerOptions = {
-        run: {
-            command: pythonPath,
-            args: ['-m', 'auto_refactor_ai.lsp_server'],
-            transport: TransportKind.stdio
-        },
-        debug: {
-            command: pythonPath,
-            args: ['-m', 'auto_refactor_ai.lsp_server', '--tcp'],
-            transport: TransportKind.socket,
-            options: {
-                execArgv: []
-            }
-        }
+    const serverExecutable: Executable = {
+        command: pythonPath,
+        args: ['-m', 'auto_refactor_ai.lsp_server']
     };
 
     // Client options
@@ -53,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
     client = new LanguageClient(
         'autoRefactorAi',
         'Auto Refactor AI',
-        serverOptions,
+        serverExecutable,
         clientOptions
     );
 
