@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "auto-refactor-ai"
-version = "0.8.0"
-description = "AI-powered static analyzer for Python with LLM suggestions, auto-apply, and project analysis"
+version = "0.9.0"
+description = "AI-powered static analyzer for Python with LLM suggestions, project analysis, and git integration"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}

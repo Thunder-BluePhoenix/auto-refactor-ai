@@ -28,7 +28,8 @@ Welcome to the complete documentation for Auto Refactor AI!
 | V6 | [V6 Implementation Guide](versions/V6_GUIDE.md) | ✅ Complete |
 | V7 | [V7 Implementation Guide](versions/V7_GUIDE.md) | ✅ Complete |
 | V8 | [V8 Implementation Guide](versions/V8_GUIDE.md) | ✅ Complete |
-| V9-V12 | Coming soon | 📋 Planned |
+| V9 | [V9 Implementation Guide](versions/V9_GUIDE.md) | ✅ Complete |
+| V10-V12 | Coming soon | 📋 Planned |
 
 ---
 

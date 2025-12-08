@@ -349,48 +349,37 @@ auto-refactor-ai myproject/ --project --min-lines 10 --similarity-threshold 0.9
 
 ## 🧰 V9 – Git Integration & Pre-commit Hook
 
-**Status:** 🔄 NEXT UP
+**Status:** ✅ COMPLETE (v0.9.0)
 
 **Goal:** Make it part of dev workflow.
 
+**Achievement:** Git integration with `--git` and `--staged` flags plus pre-commit hook support.
+
 **Features:**
-- Run only on changed files
-- Pre-commit hook support
-- Git hooks integration
-- Performance optimization
-- Incremental analysis
+- ✅ `--git` flag for modified files
+- ✅ `--staged` flag for staged files
+- ✅ Pre-commit hook configuration
+- ✅ 6 new tests (157 total)
 
 **Example:**
 ```bash
-# In .pre-commit-config.yaml
-repos:
-  - repo: local
-    hooks:
-      - id: auto-refactor-ai
-        name: Auto Refactor AI
-        entry: auto-refactor-ai
-        language: python
-        types: [python]
+# Analyze modified files
+auto-refactor-ai . --git
+
+# Analyze staged files
+auto-refactor-ai . --staged
 ```
 
-**What You Learn:**
-- Git hooks
-- Pre-commit framework
-- Performance optimization
-- Incremental processing
-
-**Implementation Tasks:**
-- [ ] Git integration module
-- [ ] Pre-commit hook config
-- [ ] Changed files detection
-- [ ] Performance profiling
-- [ ] Caching system
+**Completed Implementation:**
+- [x] Git integration module
+- [x] Pre-commit hook config
+- [x] Changed files detection
 
 ---
 
 ## 🧠 V10 – "Refactor Plan" Mode
 
-**Status:** 📋 PLANNED
+**Status:** 🔄 NEXT UP
 
 **Goal:** Generate a plan, not just line-level suggestions.
 

@@ -10,7 +10,7 @@ from .explanations import get_explanation, format_explanation, get_severity_guid
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Auto Refactor AI – Static analyzer with AI suggestions, auto-apply, and project analysis (V8)"
+        description="Auto Refactor AI – Static analyzer with AI suggestions, auto-apply, project analysis, and git support (V9)"
     )
     parser.add_argument(
         "path",
@@ -141,6 +141,17 @@ def main():
         default=5,
         help="Minimum function lines to consider for duplicates. Default: 5 (V8).",
     )
+    # V9: Git Integration
+    parser.add_argument(
+        "--git",
+        action="store_true",
+        help="Analyze only modified files in the git working tree (V9).",
+    )
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help="Analyze only files staged for git commit (V9).",
+    )
 
     args = parser.parse_args()
 
@@ -168,13 +179,55 @@ def main():
 
     target_path = Path(args.path)
 
-    if target_path.is_file():
-        issues = analyze_single_file(target_path, config)
-    elif target_path.is_dir():
-        issues = analyze_directory(target_path, config)
+    # V9: Handle Git filtering
+    if args.git or args.staged:
+        from .git_utils import get_changed_files, is_git_repo
+        
+        target_path_str = str(Path(args.path).resolve())
+        if not is_git_repo(target_path_str):
+            print(f"Error: {target_path_str} is not in a git repository.")
+            sys.exit(1)
+            
+        git_files = get_changed_files(target_path_str, staged=args.staged)
+        if not git_files:
+            mode = "staged" if args.staged else "modified"
+            print(f"No {mode} Python files found in git repository.")
+            sys.exit(0)
+            
+        print(f"Analyzing {len(git_files)} {'staged' if args.staged else 'modified'} file(s)...")
+        
+        # Analyze collected files
+        issues = []
+        for file_path in git_files:
+            file_issues = analyze_file(
+                file_path, 
+                max_function_length=config.max_function_length,
+                max_parameters=config.max_parameters,
+                max_nesting_depth=config.max_nesting_depth
+            )
+            issues.extend(file_issues)
     else:
-        print(f"[ERROR] Path not found: {target_path}")
-        sys.exit(1)
+        # Standard file/directory analysis
+        if target_path.is_file():
+            issues = analyze_file(
+                str(target_path),
+                max_function_length=config.max_function_length,
+                max_parameters=config.max_parameters,
+                max_nesting_depth=config.max_nesting_depth
+            )
+        elif target_path.is_dir():
+            issues = []
+            for file_path in target_path.rglob("*.py"):
+                file_issues = analyze_file(
+                    str(file_path),
+                    max_function_length=config.max_function_length,
+                    max_parameters=config.max_parameters,
+                    max_nesting_depth=config.max_nesting_depth
+                )
+                issues.extend(file_issues)
+        else:
+            print(f"[ERROR] Path not found: {args.path}")
+            sys.exit(1)
 
     # V6: AI Suggestions mode (optionally with V7 auto-apply)
     if args.ai_suggestions:

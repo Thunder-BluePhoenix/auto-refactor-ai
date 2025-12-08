@@ -58,7 +58,7 @@ auto-refactor-ai/
 
 ## 📊 Current Status
 
-**Version:** V8 (v0.8.0) - Project-Level Analysis ✅
+**Version:** V9 (v0.9.0) - Git Integration ✅
 
 **What Works:**
 - ✅ Multiple analysis rules (length, parameters, nesting)
@@ -66,7 +66,7 @@ auto-refactor-ai/
 - ✅ Configuration files (TOML/YAML)
 - ✅ JSON output for CI/CD integration
 - ✅ Pip installable package
-- ✅ Comprehensive test suite (146 tests, 85%+ coverage)
+- ✅ Comprehensive test suite (157 tests, 80%+ coverage)
 - ✅ GitHub Actions CI/CD (15 combinations)
 - ✅ Pre-commit hooks
 - ✅ Code quality tools (black, ruff, mypy)
@@ -79,10 +79,12 @@ auto-refactor-ai/
 - ✅ Dry-run and interactive modes (V7)
 - ✅ Project-level duplicate detection (V8)
 - ✅ AST hashing and architecture recommendations (V8)
+- ✅ Git integration with `--git` and `--staged` flags (V9)
+- ✅ Pre-commit hook configuration (V9)
 
 **What's Next:**
-- V9: Git integration & pre-commit hooks
 - V10: Refactor planning mode
+- V11: IDE/Editor integrations
 - ... (see [Roadmap](ROADMAP.md))
 
 ---
@@ -249,8 +251,8 @@ python -m auto_refactor_ai . --rules all
 | **V6** | LLM integration | ⭐⭐⭐⭐ | ✅ Complete |
 | **V7** | Auto-fix | ⭐⭐⭐⭐ | ✅ Complete |
 | **V8** | Project analysis | ⭐⭐⭐⭐ | ✅ Complete |
-| **V9** | Git integration | ⭐⭐⭐ | 🔄 Next Up |
-| **V10** | Planning mode | ⭐⭐⭐⭐ | 📋 Planned |
+| **V9** | Git integration | ⭐⭐⭐ | ✅ Complete |
+| **V10** | Planning mode | ⭐⭐⭐⭐ | 🔄 Next Up |
 | **V11** | IDE integration | ⭐⭐⭐⭐⭐ | 📋 Planned |
 | **V12** | Community launch | ⭐⭐⭐ | 📋 Planned |
 

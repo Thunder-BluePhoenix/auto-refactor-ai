@@ -2,6 +2,28 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V9] - 2025-12-08
+
+### Added
+- **Git Integration**
+  - New `git_utils.py` module
+  - `--git` flag to analyze modified files
+  - `--staged` flag to analyze staged files
+  - Pre-commit hooks support (`.pre-commit-hooks.yaml`)
+
+- **New Tests**
+  - `tests/test_git_utils.py` - 6 tests
+  - Total test count: 157 (up from 151)
+
+### Changed
+- Updated version to 0.9.0
+- CLI description updated to "V9"
+
+### Documentation
+- `docs/versions/V9_GUIDE.md` - Complete V9 guide
+
+---
+
 ## [V8] - 2025-12-08
 
 ### Added
