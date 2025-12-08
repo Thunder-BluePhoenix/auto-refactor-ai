@@ -98,6 +98,21 @@ This directory contains test files to validate the auto-refactor-ai analyzer.
   - Context managers
 - **Expected Results**: Various parameter and nesting issues
 
+### `test_duplicates_a.py` (V8+)
+- **Purpose**: Duplicate detection testing
+- **Contains**:
+  - Intentional duplicate functions
+  - Unique functions for comparison
+  - Companion to `test_duplicates_b.py`
+- **Expected Results**: Detected as duplicates with `--project` flag
+
+### `test_duplicates_b.py` (V8+)
+- **Purpose**: Companion file for duplicate detection
+- **Contains**:
+  - Functions with same AST structure as `test_duplicates_a.py`
+  - Different variable/function names (same logic)
+- **Expected Results**: Matches detected with `--project` flag
+
 ### `sample_test.py` (Original V0 test file)
 - **Purpose**: Original test file from V0
 - **Contains**: Long functions with comments

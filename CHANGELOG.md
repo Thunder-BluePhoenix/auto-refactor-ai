@@ -2,6 +2,49 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V8] - 2025-12-08
+
+### Added
+- **Project-Level Analysis**
+  - New `project_analyzer.py` module (400+ lines)
+  - Cross-file duplicate code detection
+  - AST normalization and hashing
+  - Architecture recommendations
+
+- **Duplicate Detection**
+  - AST-based structural comparison
+  - Hash-based grouping
+  - Potential savings calculation
+  - Module consolidation suggestions
+
+- **New CLI Flags**
+  - `--project` / `-p` - Enable project-level analysis
+  - `--find-duplicates` - Find duplicate code
+  - `--similarity-threshold` - Similarity threshold (0.0-1.0)
+  - `--min-lines` - Minimum lines to consider
+
+- **New Tests**
+  - `tests/test_project_analyzer.py` - 15 tests
+  - Total test count: 146 (up from 131)
+
+- **New Test Files**
+  - `test_files/test_duplicates_a.py` - Duplicate patterns
+  - `test_files/test_duplicates_b.py` - Companion duplicates
+
+### Changed
+- Updated version to 0.8.0
+- CLI description updated to "V8"
+
+### Documentation
+- `docs/versions/V8_GUIDE.md` - Complete V8 guide
+
+### Learning Outcomes
+- AST normalization techniques
+- Code similarity algorithms
+- Cross-file analysis patterns
+
+---
+
 ## [V7] - 2025-12-08
 
 ### Added

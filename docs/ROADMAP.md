@@ -319,42 +319,37 @@ auto-refactor-ai . --ai-suggestions --apply --backup
 
 ## 🧩 V8 – Project-Level Refactor Suggestions
 
-**Status:** 🔄 NEXT UP
+**Status:** ✅ COMPLETE (v0.8.0)
 
 **Goal:** Go beyond single functions.
 
+**Achievement:** Cross-file duplicate detection with AST hashing and architecture recommendations.
+
 **Features:**
-- Detect duplicate logic across files
-- Suggest shared helper modules
-- Identify code smells at project level
-- Architectural recommendations
+- ✅ `--project` flag for project analysis
+- ✅ `--find-duplicates` for duplicate detection
+- ✅ AST normalization and hashing
+- ✅ Duplicate code grouping
+- ✅ Architecture recommendations
+- ✅ 15 new tests (146 total)
 
 **Example:**
-```
-[PROJECT] Duplicate logic detected:
-  - auth/login.py:validate_user()
-  - auth/register.py:check_user()
-
-Suggestion: Extract into auth/validators.py:validate_user_credentials()
+```bash
+auto-refactor-ai myproject/ --project --find-duplicates
+auto-refactor-ai myproject/ --project --min-lines 10 --similarity-threshold 0.9
 ```
 
-**What You Learn:**
-- Code similarity detection
-- AST normalization
-- Cross-file analysis
-- Architecture patterns
-
-**Implementation Tasks:**
-- [ ] Implement AST hashing
-- [ ] Build similarity detector
-- [ ] Create cross-file analyzer
-- [ ] Suggest module extraction
+**Completed Implementation:**
+- [x] Implement AST hashing
+- [x] Build similarity detector
+- [x] Create cross-file analyzer
+- [x] Suggest module extraction
 
 ---
 
 ## 🧰 V9 – Git Integration & Pre-commit Hook
 
-**Status:** 📋 PLANNED
+**Status:** 🔄 NEXT UP
 
 **Goal:** Make it part of dev workflow.
 

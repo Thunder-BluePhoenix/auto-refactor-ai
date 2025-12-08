@@ -18,17 +18,19 @@ auto-refactor-ai/
 │   ├── explanations.py        # Template-based explanations (V5)
 │   ├── llm_providers.py       # LLM provider abstraction (V6)
 │   ├── ai_suggestions.py      # AI-powered suggestions (V6)
-│   └── auto_refactor.py       # Auto-refactor with apply (V7)
+│   ├── auto_refactor.py       # Auto-refactor with apply (V7)
+│   └── project_analyzer.py    # Project-level analysis (V8)
 │
-├── tests/                     # Test suite (V4+) - 131 tests
+├── tests/                     # Test suite (V4+) - 146 tests
 │   ├── __init__.py           # Test package initialization
 │   ├── test_analyzer.py      # 26 tests - Core analysis tests
 │   ├── test_config.py        # 22 tests - Configuration tests
 │   ├── test_cli.py           # 14 tests - CLI interface tests
 │   ├── test_explanations.py  # 15 tests - Explanations tests (V5)
 │   ├── test_llm_providers.py # 26 tests - LLM provider tests (V6)
-│   ├── test_ai_suggestions.py # 10 tests - AI suggestions tests (V6)
-│   └── test_auto_refactor.py  # 18 tests - Auto-refactor tests (V7)
+│   ├── test_ai_suggestions.py # 10 tests - AI suggestions (V6)
+│   ├── test_auto_refactor.py  # 18 tests - Auto-refactor (V7)
+│   └── test_project_analyzer.py # 15 tests - Project analysis (V8)
 │
 ├── test_files/               # Sample files for manual testing
 │   ├── README.md             # Test files documentation
@@ -55,7 +57,8 @@ auto-refactor-ai/
 │       ├── V4_GUIDE.md
 │       ├── V5_GUIDE.md
 │       ├── V6_GUIDE.md
-│       └── V7_GUIDE.md
+│       ├── V7_GUIDE.md
+│       └── V8_GUIDE.md
 │
 ├── .github/                   # GitHub configuration (V4+)
 │   └── workflows/
@@ -81,9 +84,9 @@ auto-refactor-ai/
 
 ## 🏗️ Core Components
 
-### Current Architecture (V7 - 0.7.0)
+### Current Architecture (V8 - 0.8.0)
 
-The project has evolved through seven major versions, each adding significant functionality while maintaining backward compatibility.
+The project has evolved through eight major versions, each adding significant functionality while maintaining backward compatibility.
 
 ### 1. `analyzer.py` - The Analysis Engine
 
@@ -502,15 +505,15 @@ def get_provider_status_message() -> str: ...
 
 ---
 
-## 🧪 Testing Architecture (V7)
+## 🧪 Testing Architecture (V8)
 
 ### Test Suite Overview
 
 **Statistics:**
-- **Total Tests:** 131
+- **Total Tests:** 146
 - **Coverage:** 85%+ (exceeds 80% requirement)
-- **Test Modules:** 7 (analyzer, config, CLI, explanations, llm_providers, ai_suggestions, auto_refactor)
-- **Test Classes:** 35+
+- **Test Modules:** 8 (analyzer, config, CLI, explanations, llm_providers, ai_suggestions, auto_refactor, project_analyzer)
+- **Test Classes:** 40+
 - **CI/CD:** GitHub Actions on 15 combinations (3 OS × 5 Python versions)
 
 **Test Structure:**
