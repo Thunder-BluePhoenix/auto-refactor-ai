@@ -2,6 +2,66 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V12] - 2025-12-08
+
+### Added
+- **Community-Ready Features**
+  - Professional README with badges and feature tables
+  - Examples directory (`examples/`) with before/after refactoring samples
+  - GitHub issue templates (Bug Report, Feature Request)
+  - Pull Request template
+  - Comprehensive `CONTRIBUTING.md` guide
+  - `CODE_OF_CONDUCT.md`
+
+### Changed
+- Updated version to 0.12.0
+- Improved project documentation structure
+
+---
+
+## [V11] - 2025-12-08
+
+### Added
+- **Language Server Protocol (LSP) Support**
+  - New `lsp_server.py` module (270+ lines)
+  - Real-time diagnostics as you type
+  - Code actions for quick fixes
+  - Hover information with explanations
+  - Works with any LSP-compatible editor
+
+- **New CLI Flags**
+  - `--lsp` - Start LSP server (stdio transport)
+  - `--lsp-tcp` - Use TCP transport for debugging
+  - `--lsp-port` - Configure TCP port (default: 2087)
+
+- **VS Code Extension**
+  - `vscode-extension/` directory with full extension
+  - Language client integration
+  - Configuration options
+  - Commands for manual analysis
+
+- **New Optional Dependency**
+  - `pip install auto-refactor-ai[lsp]` - Install with pygls
+
+- **New Tests**
+  - `tests/test_lsp_server.py` - 7 tests
+  - Total test count: 290 (up from 289)
+
+### Changed
+- Updated version to 0.11.0
+- CLI description updated to include LSP
+
+### Example Usage
+```bash
+# Start LSP server (for editor integration)
+auto-refactor-ai --lsp
+
+# Start with TCP transport (for debugging)
+auto-refactor-ai --lsp --lsp-tcp --lsp-port 3000
+```
+
+---
+
 ## [V10] - 2025-12-08
 
 ### Added

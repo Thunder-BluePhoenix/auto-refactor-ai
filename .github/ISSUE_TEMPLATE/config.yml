@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://github.com/yourusername/auto-refactor-ai#readme
+    about: Check the docs before opening an issue
+  - name: 💬 Discussions
+    url: https://github.com/yourusername/auto-refactor-ai/discussions
+    about: Ask questions and discuss ideas

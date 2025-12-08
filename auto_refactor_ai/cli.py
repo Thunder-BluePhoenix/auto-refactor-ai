@@ -79,6 +79,12 @@ def create_argument_parser():
     parser.add_argument(
         "--output", "-o", type=str, default=None, help="Output file for saving reports"
     )
+    # V11: Language Server Protocol
+    parser.add_argument("--lsp", action="store_true", help="Start LSP server (V11)")
+    parser.add_argument(
+        "--lsp-tcp", action="store_true", help="Use TCP transport for LSP (default: stdio)"
+    )
+    parser.add_argument("--lsp-port", type=int, default=2087, help="TCP port for LSP server")
     return parser
 
 
@@ -157,6 +163,14 @@ def main():
     """Main entry point for the CLI."""
     parser = create_argument_parser()
     args = parser.parse_args()
+
+    # V11: Start LSP server if requested
+    if args.lsp:
+        from .lsp_server import start_server
+
+        transport = "tcp" if args.lsp_tcp else "stdio"
+        start_server(transport=transport, port=args.lsp_port)
+        return
 
     # Check providers and exit if requested
     if args.check_providers:

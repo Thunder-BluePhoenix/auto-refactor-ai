@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "auto-refactor-ai"
-version = "0.10.0"
-description = "AI-powered static analyzer for Python with LLM suggestions, project analysis, git integration, and refactoring plans"
+version = "0.12.0"
+description = "AI-powered static analyzer for Python with LLM suggestions, project analysis, git integration, refactoring plans, and LSP server"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
@@ -56,6 +56,10 @@ ai-all = [
     "openai>=1.0.0",
     "anthropic>=0.18.0",
     "google-generativeai>=0.4.0",
+]
+# V11: Language Server Protocol support
+lsp = [
+    "pygls>=1.0.0",
 ]
 
 
