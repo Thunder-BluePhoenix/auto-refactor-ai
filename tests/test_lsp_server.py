@@ -341,9 +341,7 @@ class TestStartServer:
 
         # Test start_server with stdio
         mock_server = mocker.patch("auto_refactor_ai.lsp_server.server")
-        mocker.patch(
-            "auto_refactor_ai.lsp_server.get_server", return_value=mock_server
-        )
+        mocker.patch("auto_refactor_ai.lsp_server.get_server", return_value=mock_server)
 
         start_server(transport="stdio")
         mock_server.start_io.assert_called_once()
