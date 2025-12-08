@@ -413,16 +413,18 @@ auto-refactor-ai . --plan --ai-suggestions  # With LLM advice
 
 ## 🎯 V11 – Editor Integration
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.11.0)
 
 **Goal:** Use inside your editor.
 
+**Achievement:** Full LSP server with VS Code extension.
+
 **Features:**
-- VS Code extension
-- Language Server Protocol (LSP) support
-- Real-time inline suggestions
-- Quick fixes
-- IDE problem matcher
+- ✅ VS Code extension
+- ✅ Language Server Protocol (LSP) support
+- ✅ Real-time diagnostics
+- ✅ Code actions (quick fixes)
+- ✅ Hover information
 
 **What You Learn:**
 - Editor tooling basics
@@ -430,12 +432,12 @@ auto-refactor-ai . --plan --ai-suggestions  # With LLM advice
 - VS Code extension development
 - IDE communication
 
-**Implementation Tasks:**
-- [ ] Create Language Server
-- [ ] Build VS Code extension
-- [ ] Implement problem matcher
-- [ ] Add quick fix actions
-- [ ] Publish to VS Code marketplace
+**Completed Implementation:**
+- [x] Create Language Server (`lsp_server.py`)
+- [x] Build VS Code extension (`vscode-extension/`)
+- [x] Implement diagnostics
+- [x] Add code actions
+- [x] Add hover info
 
 ---
 

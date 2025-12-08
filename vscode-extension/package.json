@@ -1,0 +1,86 @@
+{
+    "name": "auto-refactor-ai",
+    "displayName": "Auto Refactor AI",
+    "description": "AI-powered static analyzer for Python with refactoring suggestions",
+    "version": "0.11.0",
+    "publisher": "auto-refactor-ai",
+    "engines": {
+        "vscode": "^1.75.0"
+    },
+    "categories": [
+        "Linters",
+        "Programming Languages"
+    ],
+    "keywords": [
+        "python",
+        "refactoring",
+        "linting",
+        "code-quality",
+        "ai"
+    ],
+    "activationEvents": [
+        "onLanguage:python"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "auto-refactor-ai.analyze",
+                "title": "Analyze Current File",
+                "category": "Auto Refactor AI"
+            },
+            {
+                "command": "auto-refactor-ai.showExplanation",
+                "title": "Show Explanation",
+                "category": "Auto Refactor AI"
+            }
+        ],
+        "configuration": {
+            "title": "Auto Refactor AI",
+            "properties": {
+                "autoRefactorAi.pythonPath": {
+                    "type": "string",
+                    "default": "python",
+                    "description": "Path to Python interpreter"
+                },
+                "autoRefactorAi.maxFunctionLength": {
+                    "type": "number",
+                    "default": 30,
+                    "description": "Maximum function length in lines"
+                },
+                "autoRefactorAi.maxParameters": {
+                    "type": "number",
+                    "default": 5,
+                    "description": "Maximum parameters per function"
+                },
+                "autoRefactorAi.maxNestingDepth": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Maximum nesting depth"
+                },
+                "autoRefactorAi.lspPort": {
+                    "type": "number",
+                    "default": 2087,
+                    "description": "Port for LSP server (TCP mode)"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/vscode": "^1.75.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.0.0",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^9.0.0"
+    }
+}
