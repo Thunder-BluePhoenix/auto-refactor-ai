@@ -10,7 +10,7 @@ from .explanations import get_explanation, format_explanation, get_severity_guid
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Auto Refactor AI – Static analyzer with AI-powered suggestions and auto-apply (V7)"
+        description="Auto Refactor AI – Static analyzer with AI suggestions, auto-apply, and project analysis (V8)"
     )
     parser.add_argument(
         "path",
@@ -118,6 +118,29 @@ def main():
         default=".auto-refactor-backup",
         help="Directory for backups. Default: .auto-refactor-backup (V7).",
     )
+    # V8: Project-Level Analysis
+    parser.add_argument(
+        "--project", "-p",
+        action="store_true",
+        help="Enable project-level analysis with duplicate detection (V8).",
+    )
+    parser.add_argument(
+        "--find-duplicates",
+        action="store_true",
+        help="Find duplicate/similar code across files (V8).",
+    )
+    parser.add_argument(
+        "--similarity-threshold",
+        type=float,
+        default=0.8,
+        help="Minimum similarity for duplicate detection (0.0-1.0). Default: 0.8 (V8).",
+    )
+    parser.add_argument(
+        "--min-lines",
+        type=int,
+        default=5,
+        help="Minimum function lines to consider for duplicates. Default: 5 (V8).",
+    )
 
     args = parser.parse_args()
 
@@ -126,6 +149,11 @@ def main():
         from .ai_suggestions import get_provider_status_message
         print(get_provider_status_message())
         sys.exit(0)
+
+    # V8: Project-level analysis mode
+    if args.project or args.find_duplicates:
+        handle_project_analysis(args)
+        return
 
     # Load configuration
     config = load_config(Path(args.config) if args.config else None)
@@ -210,6 +238,29 @@ def handle_ai_suggestions(issues, args):
 
     # V6: Just print suggestions
     print_ai_suggestions(summary, show_original=True)
+
+
+def handle_project_analysis(args):
+    """Handle project-level analysis mode (V8)."""
+    from .project_analyzer import analyze_project, print_project_analysis
+
+    target_path = Path(args.path)
+    
+    if not target_path.exists():
+        print(f"[ERROR] Path not found: {target_path}")
+        return
+
+    print(f"\n🔍 Analyzing project: {target_path}")
+    print(f"   Similarity threshold: {args.similarity_threshold}")
+    print(f"   Minimum lines: {args.min_lines}\n")
+
+    analysis = analyze_project(
+        root_path=str(target_path),
+        min_lines=args.min_lines,
+        similarity_threshold=args.similarity_threshold,
+    )
+
+    print_project_analysis(analysis)
 
 
 def handle_auto_refactor(ai_summary, args):
