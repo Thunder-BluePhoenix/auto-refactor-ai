@@ -72,9 +72,12 @@ def create_argument_parser():
     parser.add_argument("--plan", action="store_true", help="Generate a refactoring plan (V10)")
     parser.add_argument(
         "--plan-format",
-        choices=["text", "markdown"],
+        choices=["text", "markdown", "html"],
         default="text",
         help="Format for the refactoring plan",
+    )
+    parser.add_argument(
+        "--output", "-o", type=str, default=None, help="Output file for saving reports"
     )
     return parser
 
@@ -254,6 +257,7 @@ def handle_project_analysis(args):
 
 def handle_refactor_plan(args, config, issues):
     """Handle refactor planning mode (V10)."""
+    from .llm_providers import LLMConfig, LLMProvider
     from .project_analyzer import analyze_project
     from .refactor_planner import RefactorPlanner
 
@@ -268,18 +272,32 @@ def handle_refactor_plan(args, config, issues):
             similarity_threshold=args.similarity_threshold,
         )
 
-    # Initialize planner
+    # Build LLM config if AI suggestions requested
+    llm_config = None
+    include_llm = args.ai_suggestions
+    if include_llm:
+        if args.ai_provider or args.ai_model:
+            provider = LLMProvider(args.ai_provider) if args.ai_provider else LLMProvider.OPENAI
+            llm_config = LLMConfig.from_env(provider)
+            if args.ai_model:
+                llm_config.model = args.ai_model
+        print("🤖 Generating AI strategic advice...")
+
+    # Initialize planner and generate plan
     print("🧠 Generating strategic refactoring plan...")
     planner = RefactorPlanner(issues, project_analysis)
-    plan = planner.generate_plan()
+    plan = planner.generate_plan(include_llm_advice=include_llm, llm_config=llm_config)
 
-    # Optional LLM Advice (Placeholder for now)
-    if args.ai_suggestions:
-        # TODO: Implement LLM advice integration
-        pass
+    # Format the output
+    output = planner.format_plan(plan, format_type=args.plan_format)
 
-    # Print plan
-    print(planner.format_plan(plan, format_type=args.plan_format))
+    # Save to file or print
+    if args.output:
+        output_path = Path(args.output)
+        output_path.write_text(output, encoding="utf-8")
+        print(f"\n📄 Report saved to: {output_path}")
+    else:
+        print(output)
 
 
 def handle_auto_refactor(ai_summary, args):

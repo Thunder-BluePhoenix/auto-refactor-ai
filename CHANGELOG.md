@@ -2,6 +2,53 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V10] - 2025-12-08
+
+### Added
+- **Refactor Plan Mode**
+  - `--plan` flag generates strategic refactoring roadmaps
+  - Priority-ranked issues with effort/impact analysis
+  - Quick wins identification
+  - Multi-phase roadmap generation
+
+- **LLM Strategic Advice**
+  - AI-powered recommendations integrated into plans
+  - Use `--plan --ai-suggestions` for LLM insights
+  - Customizable with `--ai-provider` and `--ai-model`
+
+- **HTML Report Generation**
+  - `--plan-format html` generates styled HTML reports
+  - Dark theme with visual metrics grid
+  - Responsive design for desktop viewing
+
+- **Output File Support**
+  - `--output` / `-o` flag to save reports to file
+  - Works with text, markdown, and HTML formats
+
+- **New Tests**
+  - `tests/test_refactor_planner_v10.py` - 9 tests
+  - Total test count: 289 (up from 280)
+
+- **Mypy Type Fixes**
+  - Fixed all 26 mypy type errors across the codebase
+  - Updated python_version to 3.9 in mypy config
+
+### Changed
+- Updated version to 0.10.0
+- CLI description updated to include refactoring plans
+- Test coverage: 87% (from 80%)
+
+### Example Usage
+```bash
+# Generate text plan
+auto-refactor-ai . --plan
+
+# Generate HTML report with AI advice
+auto-refactor-ai . --plan --plan-format html --ai-suggestions -o report.html
+```
+
+---
+
 ## [V9] - 2025-12-08
 
 ### Added

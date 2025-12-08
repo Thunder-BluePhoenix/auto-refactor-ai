@@ -1,13 +1,14 @@
 """Refactor Planner module for V10.
 
 This module aggregates analysis results and prioritization to generate
-strategic refactoring plans.
+strategic refactoring plans with optional LLM-powered insights.
 """
 
 from dataclasses import dataclass
 from typing import List, Optional
 
 from .analyzer import Issue, Severity
+from .llm_providers import LLMConfig, get_provider
 from .project_analyzer import ProjectAnalysis
 
 
@@ -61,11 +62,25 @@ class RefactorPlanner:
         self.project_analysis = project_analysis
         self.metrics = self._calculate_metrics()
 
-    def generate_plan(self) -> RefactorPlan:
-        """Generate the full refactoring plan."""
+    def generate_plan(
+        self, include_llm_advice: bool = False, llm_config: Optional[LLMConfig] = None
+    ) -> RefactorPlan:
+        """Generate the full refactoring plan.
+
+        Args:
+            include_llm_advice: Whether to include LLM-generated strategic advice
+            llm_config: LLM configuration (auto-detected if None)
+
+        Returns:
+            Complete refactoring plan
+        """
         items = self._prioritize_issues()
         hotspots = sorted(items, key=lambda x: x.priority_score, reverse=True)[:5]
         quick_wins = self._identify_quick_wins(items)
+
+        llm_advice = None
+        if include_llm_advice:
+            llm_advice = self._get_llm_advice(hotspots, quick_wins, llm_config)
 
         return RefactorPlan(
             executive_summary=self._generate_summary(),
@@ -73,6 +88,7 @@ class RefactorPlanner:
             critical_hotspots=hotspots,
             quick_wins=quick_wins,
             strategic_roadmap=self._generate_roadmap(hotspots, quick_wins),
+            llm_advice=llm_advice,
         )
 
     def _calculate_metrics(self) -> PlanMetric:
@@ -198,10 +214,85 @@ class RefactorPlanner:
 
         return roadmap
 
+    def _get_llm_advice(
+        self,
+        hotspots: List[RefactorItem],
+        quick_wins: List[RefactorItem],
+        llm_config: Optional[LLMConfig] = None,
+    ) -> Optional[str]:
+        """Get strategic advice from LLM.
+
+        Args:
+            hotspots: Top critical hotspots
+            quick_wins: Low-effort quick wins
+            llm_config: LLM configuration
+
+        Returns:
+            LLM-generated strategic advice or None if unavailable
+        """
+        try:
+            provider = get_provider(llm_config)
+
+            if not provider.is_available():
+                return None
+
+            # Build context for LLM
+            context = self._build_llm_context(hotspots, quick_wins)
+
+            system_prompt = """You are a senior software architect providing strategic 
+refactoring advice. Based on the codebase analysis, provide:
+1. Top 3 priority recommendations (be specific)
+2. Potential risks to watch for
+3. Suggested refactoring order
+
+Keep your response concise (under 200 words)."""
+
+            response = provider.generate(context, system_prompt)
+
+            if response.success:
+                return response.content
+            return None
+
+        except Exception:
+            return None
+
+    def _build_llm_context(
+        self, hotspots: List[RefactorItem], quick_wins: List[RefactorItem]
+    ) -> str:
+        """Build context string for LLM."""
+        lines = [
+            f"Codebase Analysis Summary:",
+            f"- {self.metrics.total_files} files, {self.metrics.total_functions} functions",
+            f"- {self.metrics.critical_count} critical, {self.metrics.warning_count} warnings",
+            f"- {self.metrics.duplicate_count} duplicate code groups",
+            "",
+            "Top Critical Hotspots:",
+        ]
+
+        for item in hotspots[:3]:
+            lines.append(f"- {item.function_name}: {item.description}")
+
+        lines.append("")
+        lines.append("Quick Win Opportunities:")
+        for item in quick_wins[:3]:
+            lines.append(f"- {item.function_name}: {item.description}")
+
+        return "\n".join(lines)
+
     def format_plan(self, plan: RefactorPlan, format_type: str = "text") -> str:
-        """Format the plan as a string."""
+        """Format the plan as a string.
+
+        Args:
+            plan: The refactoring plan to format
+            format_type: Output format - 'text', 'markdown', or 'html'
+
+        Returns:
+            Formatted plan string
+        """
         if format_type == "markdown":
             return self._format_markdown(plan)
+        elif format_type == "html":
+            return self._format_html(plan)
         return self._format_text(plan)
 
     def _format_markdown(self, plan: RefactorPlan) -> str:
@@ -269,3 +360,91 @@ class RefactorPlanner:
             lines.append(plan.llm_advice)
 
         return "\n".join(lines)
+
+    def _format_html(self, plan: RefactorPlan) -> str:
+        """Format plan as a standalone HTML document."""
+        # CSS styles for the report
+        styles = """
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                   max-width: 900px; margin: 40px auto; padding: 20px; background: #0d1117; color: #c9d1d9; }
+            h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+            h2 { color: #8b949e; margin-top: 30px; }
+            .summary { background: #161b22; padding: 15px; border-radius: 6px; border-left: 4px solid #58a6ff; }
+            .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+            .metric { background: #21262d; padding: 15px; border-radius: 6px; text-align: center; }
+            .metric .value { font-size: 2em; font-weight: bold; }
+            .critical { color: #f85149; }
+            .warning { color: #d29922; }
+            .info { color: #58a6ff; }
+            .hotspot { background: #21262d; padding: 15px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #f85149; }
+            .quick-win { background: #21262d; padding: 10px 15px; margin: 5px 0; border-radius: 6px; border-left: 3px solid #3fb950; }
+            .roadmap { list-style: none; padding: 0; }
+            .roadmap li { padding: 10px 15px; margin: 5px 0; background: #21262d; border-radius: 6px; }
+            .roadmap li::before { content: '→ '; color: #58a6ff; }
+            .ai-advice { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); 
+                         padding: 20px; border-radius: 6px; border: 1px solid #374151; margin-top: 20px; }
+            .ai-advice h2 { color: #a78bfa; }
+        </style>
+        """
+
+        html = [
+            "<!DOCTYPE html>",
+            "<html lang='en'>",
+            "<head>",
+            "  <meta charset='UTF-8'>",
+            "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>",
+            "  <title>Refactoring Plan Report</title>",
+            styles,
+            "</head>",
+            "<body>",
+            "  <h1>🏗️ Refactoring Plan</h1>",
+            f"  <div class='summary'>{plan.executive_summary}</div>",
+            "",
+            "  <h2>📊 Metrics</h2>",
+            "  <div class='metric-grid'>",
+            f"    <div class='metric'><div class='value'>{plan.metrics.total_files}</div>Files</div>",
+            f"    <div class='metric'><div class='value critical'>{plan.metrics.critical_count}</div>Critical</div>",
+            f"    <div class='metric'><div class='value warning'>{plan.metrics.warning_count}</div>Warnings</div>",
+            f"    <div class='metric'><div class='value info'>{plan.metrics.duplicate_count}</div>Duplicates</div>",
+            "  </div>",
+            "",
+            "  <h2>🛣️ Strategic Roadmap</h2>",
+            "  <ul class='roadmap'>",
+        ]
+
+        for step in plan.strategic_roadmap:
+            html.append(f"    <li>{step}</li>")
+
+        html.append("  </ul>")
+        html.append("")
+        html.append("  <h2>🔥 Critical Hotspots</h2>")
+
+        for item in plan.critical_hotspots:
+            html.append(f"  <div class='hotspot'>")
+            html.append(f"    <strong>{item.function_name}</strong> <em>({item.file_path})</em>")
+            html.append(f"    <p>{item.description}</p>")
+            html.append(f"    <small>Impact: {item.impact} | Effort: {item.effort}</small>")
+            html.append(f"  </div>")
+
+        html.append("")
+        html.append("  <h2>⚡ Quick Wins</h2>")
+
+        for item in plan.quick_wins:
+            html.append(f"  <div class='quick-win'>")
+            html.append(f"    <strong>{item.function_name}:</strong> {item.description}")
+            html.append(f"  </div>")
+
+        if plan.llm_advice:
+            html.append("")
+            html.append("  <div class='ai-advice'>")
+            html.append("    <h2>🤖 AI Strategic Advice</h2>")
+            advice_html = plan.llm_advice.replace("\n", "<br>")
+            html.append(f"    <p>{advice_html}</p>")
+            html.append("  </div>")
+
+        html.append("")
+        html.append("</body>")
+        html.append("</html>")
+
+        return "\n".join(html)

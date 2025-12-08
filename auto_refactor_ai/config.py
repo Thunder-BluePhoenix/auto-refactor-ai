@@ -108,7 +108,9 @@ def _parse_simple_toml(path: Path) -> Dict[str, Any]:
                     parsed_value = value_str.lower() == "true"
                 elif value_str.startswith("[") and value_str.endswith("]"):
                     # Simple list parsing
-                    parsed_value = [v.strip().strip("\"'") for v in value_str[1:-1].split(",") if v.strip()]
+                    parsed_value = [
+                        v.strip().strip("\"'") for v in value_str[1:-1].split(",") if v.strip()
+                    ]
                 elif value_str.startswith('"') and value_str.endswith('"'):
                     parsed_value = value_str[1:-1]
                 elif value_str.startswith("'") and value_str.endswith("'"):

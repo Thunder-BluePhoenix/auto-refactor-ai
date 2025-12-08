@@ -1,16 +1,16 @@
 # Auto Refactor AI
 
-[![PyPI version](https://img.shields.io/badge/pypi-v0.4.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/badge/pypi-v0.10.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/coverage-88%25-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-289%20passed-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/coverage-87%25-brightgreen.svg)]()
 
-A beginner-friendly static analyzer for Python code that detects code quality issues and suggests refactoring opportunities.
+A comprehensive AI-powered static analyzer for Python code with refactoring suggestions, project analysis, and strategic planning.
 
-## Current Version: V4 (0.4.0)
+## Current Version: V10 (0.10.0)
 
-**Production-ready with tests & CI/CD!** V4 adds comprehensive testing, GitHub Actions CI/CD, and pre-commit hooks for automated quality assurance.
+**Production-ready with strategic refactoring plans!** V10 adds `--plan` mode for generating AI-powered refactoring roadmaps with HTML report generation.
 
 ## Features
 

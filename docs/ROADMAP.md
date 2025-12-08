@@ -379,45 +379,35 @@ auto-refactor-ai . --staged
 
 ## 🧠 V10 – "Refactor Plan" Mode
 
-**Status:** 🔄 NEXT UP
+**Status:** ✅ COMPLETE (v0.10.0)
 
 **Goal:** Generate a plan, not just line-level suggestions.
 
+**Achievement:** Strategic refactoring plans with LLM advice and HTML reports.
+
 **Features:**
-- `--plan` flag for high-level overview
-- Top N worst functions
-- Complexity hotspots
-- Suggested refactor roadmap
+- ✅ `--plan` flag for high-level overview
+- ✅ Top N worst functions (critical hotspots)
+- ✅ Complexity hotspots with priority scoring
+- ✅ Suggested refactor roadmap (multi-phase)
+- ✅ LLM-powered strategic advice (`--plan --ai-suggestions`)
+- ✅ HTML report generation (`--plan-format html`)
+- ✅ File output support (`--output report.html`)
 
 **Example:**
 ```bash
 auto-refactor-ai . --plan
+auto-refactor-ai . --plan --plan-format html -o report.html
+auto-refactor-ai . --plan --ai-suggestions  # With LLM advice
 ```
 
-**Output:**
-```
-Refactor Plan for my_project:
-
-Priority Issues:
-1. [CRITICAL] order_service.py:process_orders (120 lines, 7 params, complexity 28)
-2. [HIGH] utils.py - Contains 12 unrelated utilities, split into focused modules
-3. [HIGH] user_service.py - Scattered database calls, introduce UserRepository
-
-Metrics:
-- Total functions: 234
-- Functions needing refactor: 45 (19%)
-- Average complexity: 8.2
-- Files with issues: 12
-
-Recommended Actions:
-1. Refactor top 5 critical functions first
-2. Extract repeated validation logic to validators.py
-3. Introduce repository pattern for data access
-```
-
-**What You Learn:**
-- Project-level metrics
-- Priority ranking algorithms
+**Completed Implementation:**
+- [x] Build metrics aggregator
+- [x] Implement priority ranking
+- [x] Create plan generator
+- [x] Add LLM integration for insights
+- [x] Generate HTML reports
+- [x] 289 tests, 87% coverage
 - LLM for planning
 - Report generation
 

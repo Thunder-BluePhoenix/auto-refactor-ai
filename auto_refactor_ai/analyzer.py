@@ -71,7 +71,9 @@ class NestingVisitor(ast.NodeVisitor):
         self.current_depth -= 1
 
 
-def check_function_length(node: ast.FunctionDef, path: str, max_length: int = 30) -> Optional[Issue]:
+def check_function_length(
+    node: ast.FunctionDef, path: str, max_length: int = 30
+) -> Optional[Issue]:
     """Rule 1: Check if function is too long."""
     start = node.lineno
     end = getattr(node, "end_lineno", start)
@@ -104,7 +106,9 @@ def check_function_length(node: ast.FunctionDef, path: str, max_length: int = 30
     return None
 
 
-def check_too_many_parameters(node: ast.FunctionDef, path: str, max_params: int = 5) -> Optional[Issue]:
+def check_too_many_parameters(
+    node: ast.FunctionDef, path: str, max_params: int = 5
+) -> Optional[Issue]:
     """Rule 2: Check if function has too many parameters."""
     start = node.lineno
     end = getattr(node, "end_lineno", start)

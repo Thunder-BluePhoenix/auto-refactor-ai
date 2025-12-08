@@ -71,7 +71,10 @@ class TestHandleRefactorPlan:
         args.min_lines = 5
         args.similarity_threshold = 0.8
         args.ai_suggestions = False
+        args.ai_provider = None
+        args.ai_model = None
         args.plan_format = "text"
+        args.output = None
 
         from auto_refactor_ai.config import Config
 
