@@ -1,0 +1,7 @@
+- id: auto-refactor-ai
+  name: Auto Refactor AI
+  description: AI-powered static analyzer for Python
+  entry: auto-refactor-ai
+  language: python
+  types: [python]
+  args: ["--format", "text"]

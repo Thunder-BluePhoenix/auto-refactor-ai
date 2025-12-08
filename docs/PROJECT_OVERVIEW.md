@@ -12,8 +12,15 @@ auto-refactor-ai/
 ├── auto_refactor_ai/          # Main package
 │   ├── __init__.py            # Package initialization
 │   ├── __main__.py            # Module entry point
-│   ├── analyzer.py            # Core analysis logic (V0)
-│   └── cli.py                 # Command-line interface (V0)
+│   ├── analyzer.py            # Core analysis logic (V0-V4)
+│   ├── cli.py                 # Command-line interface (V0-V6)
+│   ├── config.py              # Configuration management (V2+)
+│   ├── explanations.py        # Template explanations (V5)
+│   ├── llm_providers.py       # LLM provider abstraction (V6)
+│   └── ai_suggestions.py      # AI-powered suggestions (V6)
+│
+├── tests/                     # Test suite - 113 tests
+│   └── test_*.py             # 6 test modules
 │
 ├── docs/                      # Complete documentation
 │   ├── README.md              # Documentation index
@@ -24,14 +31,14 @@ auto-refactor-ai/
 │   ├── PROJECT_OVERVIEW.md   # This file
 │   │
 │   ├── versions/             # Version-specific guides
-│   │   └── V0_GUIDE.md       # V0 implementation walkthrough
+│   │   ├── V0_GUIDE.md       # V0-V6 implementation walkthrough
+│   │   └── ...
 │   │
-│   └── learning/             # Additional learning materials (future)
+│   └── learning/             # Additional learning materials
 │
 ├── pyproject.toml            # Package metadata
 ├── README.md                 # Main project README
 ├── QUICKSTART.md            # 5-minute quick start
-├── sample_test.py           # Sample file for testing
 └── .gitignore               # Git ignore patterns
 ```
 
@@ -51,7 +58,7 @@ auto-refactor-ai/
 
 ## 📊 Current Status
 
-**Version:** V4 (v0.4.0) - Production Ready ✅
+**Version:** V9 (v0.9.0) - Git Integration ✅
 
 **What Works:**
 - ✅ Multiple analysis rules (length, parameters, nesting)
@@ -59,15 +66,25 @@ auto-refactor-ai/
 - ✅ Configuration files (TOML/YAML)
 - ✅ JSON output for CI/CD integration
 - ✅ Pip installable package
-- ✅ Comprehensive test suite (60 tests, 88% coverage)
+- ✅ Comprehensive test suite (157 tests, 80%+ coverage)
 - ✅ GitHub Actions CI/CD (15 combinations)
 - ✅ Pre-commit hooks
 - ✅ Code quality tools (black, ruff, mypy)
+- ✅ Detailed explanations & best practices (V5)
+- ✅ LLM-powered AI suggestions (V6)
+- ✅ Support for 4 LLM providers (OpenAI, Anthropic, Google, Ollama)
+- ✅ Token tracking & cost estimation
+- ✅ Auto-refactor mode with `--apply` flag (V7)
+- ✅ Backup system and rollback capability (V7)
+- ✅ Dry-run and interactive modes (V7)
+- ✅ Project-level duplicate detection (V8)
+- ✅ AST hashing and architecture recommendations (V8)
+- ✅ Git integration with `--git` and `--staged` flags (V9)
+- ✅ Pre-commit hook configuration (V9)
 
 **What's Next:**
-- V5: Detailed explanations & best practices
-- V6: LLM-powered AI suggestions
-- V7: Auto-refactor mode
+- V10: Refactor planning mode
+- V11: IDE/Editor integrations
 - ... (see [Roadmap](ROADMAP.md))
 
 ---
@@ -226,16 +243,16 @@ python -m auto_refactor_ai . --rules all
 | Version | Focus | Complexity | Status |
 |---------|-------|------------|--------|
 | **V0** | Single rule analyzer | ⭐ | ✅ Complete |
-| **V1** | Multiple rules | ⭐⭐ | 📋 Planned |
-| **V2** | Config & JSON | ⭐⭐ | 📋 Planned |
-| **V3** | Pip package | ⭐⭐ | 📋 Planned |
-| **V4** | Tests & CI | ⭐⭐⭐ | 📋 Planned |
-| **V5** | Explanations | ⭐⭐ | 📋 Planned |
-| **V6** | LLM integration | ⭐⭐⭐⭐ | 📋 Planned |
-| **V7** | Auto-fix | ⭐⭐⭐⭐ | 📋 Planned |
-| **V8** | Project analysis | ⭐⭐⭐⭐ | 📋 Planned |
-| **V9** | Git integration | ⭐⭐⭐ | 📋 Planned |
-| **V10** | Planning mode | ⭐⭐⭐⭐ | 📋 Planned |
+| **V1** | Multiple rules | ⭐⭐ | ✅ Complete |
+| **V2** | Config & JSON | ⭐⭐ | ✅ Complete |
+| **V3** | Pip package | ⭐⭐ | ✅ Complete |
+| **V4** | Tests & CI | ⭐⭐⭐ | ✅ Complete |
+| **V5** | Explanations | ⭐⭐ | ✅ Complete |
+| **V6** | LLM integration | ⭐⭐⭐⭐ | ✅ Complete |
+| **V7** | Auto-fix | ⭐⭐⭐⭐ | ✅ Complete |
+| **V8** | Project analysis | ⭐⭐⭐⭐ | ✅ Complete |
+| **V9** | Git integration | ⭐⭐⭐ | ✅ Complete |
+| **V10** | Planning mode | ⭐⭐⭐⭐ | 🔄 Next Up |
 | **V11** | IDE integration | ⭐⭐⭐⭐⭐ | 📋 Planned |
 | **V12** | Community launch | ⭐⭐⭐ | 📋 Planned |
 

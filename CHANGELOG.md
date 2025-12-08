@@ -2,6 +2,274 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V10] - 2025-12-08
+
+### Added
+- **Refactor Plan Mode**
+  - `--plan` flag generates strategic refactoring roadmaps
+  - Priority-ranked issues with effort/impact analysis
+  - Quick wins identification
+  - Multi-phase roadmap generation
+
+- **LLM Strategic Advice**
+  - AI-powered recommendations integrated into plans
+  - Use `--plan --ai-suggestions` for LLM insights
+  - Customizable with `--ai-provider` and `--ai-model`
+
+- **HTML Report Generation**
+  - `--plan-format html` generates styled HTML reports
+  - Dark theme with visual metrics grid
+  - Responsive design for desktop viewing
+
+- **Output File Support**
+  - `--output` / `-o` flag to save reports to file
+  - Works with text, markdown, and HTML formats
+
+- **New Tests**
+  - `tests/test_refactor_planner_v10.py` - 9 tests
+  - Total test count: 289 (up from 280)
+
+- **Mypy Type Fixes**
+  - Fixed all 26 mypy type errors across the codebase
+  - Updated python_version to 3.9 in mypy config
+
+### Changed
+- Updated version to 0.10.0
+- CLI description updated to include refactoring plans
+- Test coverage: 87% (from 80%)
+
+### Example Usage
+```bash
+# Generate text plan
+auto-refactor-ai . --plan
+
+# Generate HTML report with AI advice
+auto-refactor-ai . --plan --plan-format html --ai-suggestions -o report.html
+```
+
+---
+
+## [V9] - 2025-12-08
+
+### Added
+- **Git Integration**
+  - New `git_utils.py` module
+  - `--git` flag to analyze modified files
+  - `--staged` flag to analyze staged files
+  - Pre-commit hooks support (`.pre-commit-hooks.yaml`)
+
+- **New Tests**
+  - `tests/test_git_utils.py` - 6 tests
+  - Total test count: 157 (up from 151)
+
+### Changed
+- Updated version to 0.9.0
+- CLI description updated to "V9"
+
+### Documentation
+- `docs/versions/V9_GUIDE.md` - Complete V9 guide
+
+---
+
+## [V8] - 2025-12-08
+
+### Added
+- **Project-Level Analysis**
+  - New `project_analyzer.py` module (400+ lines)
+  - Cross-file duplicate code detection
+  - AST normalization and hashing
+  - Architecture recommendations
+
+- **Duplicate Detection**
+  - AST-based structural comparison
+  - Hash-based grouping
+  - Potential savings calculation
+  - Module consolidation suggestions
+
+- **New CLI Flags**
+  - `--project` / `-p` - Enable project-level analysis
+  - `--find-duplicates` - Find duplicate code
+  - `--similarity-threshold` - Similarity threshold (0.0-1.0)
+  - `--min-lines` - Minimum lines to consider
+
+- **New Tests**
+  - `tests/test_project_analyzer.py` - 15 tests
+  - Total test count: 146 (up from 131)
+
+- **New Test Files**
+  - `test_files/test_duplicates_a.py` - Duplicate patterns
+  - `test_files/test_duplicates_b.py` - Companion duplicates
+
+### Changed
+- Updated version to 0.8.0
+- CLI description updated to "V8"
+
+### Documentation
+- `docs/versions/V8_GUIDE.md` - Complete V8 guide
+
+### Learning Outcomes
+- AST normalization techniques
+- Code similarity algorithms
+- Cross-file analysis patterns
+
+---
+
+## [V7] - 2025-12-08
+
+### Added
+- **Auto-Refactor Mode**
+  - New `auto_refactor.py` module (400+ lines) for applying AI suggestions
+  - Automatic application of refactorings to files
+  - Unified diff generation with `difflib`
+  - Before/after change previews
+
+- **Backup System**
+  - Timestamped file backups before modification
+  - Configurable backup directory
+  - Rollback capability from backups
+
+- **New CLI Flags**
+  - `--apply` - Apply AI-suggested refactorings to files
+  - `--dry-run` - Show what would be applied without making changes
+  - `--interactive` - Ask for approval before each change (y/n/q prompts)
+  - `--backup` - Enable backups (default: True)
+  - `--no-backup` - Disable backup creation
+  - `--backup-dir` - Directory for backups (default: `.auto-refactor-backup`)
+
+- **New Tests**
+  - `tests/test_auto_refactor.py` - 18 tests for auto-refactor module
+  - Tests for diff generation, backup, apply, rollback, formatting
+  - Total test count: 131 (up from 113)
+
+### Changed
+- Updated version to 0.7.0
+- CLI description updated to "V7" with auto-apply feature
+- Package description now mentions auto-apply
+
+### Documentation
+- `docs/versions/V7_GUIDE.md` - Complete V7 implementation guide
+- `V7_COMPLETION_SUMMARY.md` - Summary of all V7 achievements
+
+### Learning Outcomes
+- Working with diffs using `difflib`
+- Safe file modification patterns
+- Backup/restore strategies
+- Interactive CLI design
+- Destructive action protection
+
+---
+
+## [V6] - 2025-12-08
+
+### Added
+- **LLM Provider Integration**
+  - New `llm_providers.py` module with unified LLM abstraction
+  - Support for OpenAI (GPT-4o, GPT-4o-mini, GPT-4-turbo)
+  - Support for Anthropic (Claude 3 Opus, Sonnet, Haiku)
+  - Support for Google (Gemini 1.5 Pro, Flash)
+  - Support for Ollama (local LLMs - CodeLlama, Llama2, Mistral)
+  - Auto-detection of available providers via environment variables
+
+- **AI-Powered Refactoring Suggestions**
+  - New `ai_suggestions.py` module for generating code improvements
+  - Extracts function source code from files
+  - Sends to LLM with engineered prompts
+  - Parses structured responses with before/after code
+  - Calculates confidence scores
+  - Tracks token usage and cost estimates
+
+- **New CLI Flags**
+  - `--ai-suggestions` - Get AI-powered refactoring suggestions
+  - `--ai-provider` - Choose specific LLM provider (openai/anthropic/google/ollama)
+  - `--ai-model` - Specify model (e.g., gpt-4o-mini, claude-3-haiku-20240307)
+  - `--ai-max-issues` - Limit number of issues to analyze (default: 5)
+  - `--check-providers` - Check which LLM providers are available
+
+- **Prompt Engineering**
+  - System prompt for code refactoring role
+  - Structured user prompts with context
+  - Response parsing for code blocks and explanations
+  - Change summary extraction
+
+- **Optional Dependencies**
+  - `[ai]` - OpenAI support
+  - `[ai-anthropic]` - Anthropic/Claude support
+  - `[ai-google]` - Google Gemini support
+  - `[ai-all]` - All providers
+
+- **New Tests**
+  - `tests/test_llm_providers.py` - 26 tests for LLM integration
+  - `tests/test_ai_suggestions.py` - 15 tests for AI suggestions
+  - Total test count: 113 (up from 75)
+
+### Changed
+- Updated version to 0.6.0
+- CLI description updated to "V6" with AI-powered suggestions
+- Package description now mentions LLM-based refactoring
+- Added "ai", "llm", "gpt" to package keywords
+
+### Documentation
+- `docs/versions/V6_GUIDE.md` - Complete V6 implementation guide
+- Updated installation instructions for AI dependencies
+- API key configuration guide
+- Cost estimation documentation
+
+### Learning Outcomes
+- Calling LLMs from Python (OpenAI, Anthropic, Google APIs)
+- Prompt engineering for code refactoring
+- API error handling and timeouts
+- Token management and cost estimation
+- Provider abstraction with factory pattern
+
+---
+
+## [V5] - 2025-12-08
+
+### Added
+- **Detailed Explanations System**
+  - New `explanations.py` module (374 lines) with comprehensive explanation templates
+  - `Explanation` dataclass with structured fields for why/how/examples
+  - Pre-defined explanations for all 3 rules with educational content
+
+- **New CLI Flags**
+  - `--explain` flag for detailed explanations with full examples
+  - `--explain-summary` flag for brief explanations (quick tips)
+  - Severity-specific guidance for CRITICAL/WARN/INFO issues
+
+- **Educational Content**
+  - "Why it matters" sections explaining the impact of each issue
+  - "How to fix" step-by-step guidance (5 steps per rule)
+  - Good vs Bad code examples for each rule
+  - References to Clean Code, Refactoring Guru, and design patterns
+
+- **Rule Explanations**
+  - **Function Too Long**: SRP, Extract Method, cognitive overload
+  - **Too Many Parameters**: Parameter Object, Builder Pattern
+  - **Deep Nesting**: Guard clauses, early returns, Strategy Pattern
+
+- **New Tests**
+  - `tests/test_explanations.py` with 15 comprehensive tests
+  - Tests for getting explanations, formatting, severity guidance
+  - Quality validation tests for explanation content
+  - Total test count: 75 (up from 60)
+
+### Changed
+- Updated version to 0.5.0
+- CLI description updated to "V5" with detailed explanations
+- CLI now respects `--explain` and `--explain-summary` flags
+
+### Documentation
+- `docs/versions/V5_GUIDE.md` - Complete V5 implementation guide
+- `V5_COMPLETION_SUMMARY.md` - Summary of all V5 achievements
+
+### Learning Outcomes
+- Good error message design principles
+- Refactoring theory (DRY, SRP, cohesion)
+- Documentation practices with examples
+- Progressive disclosure (verbose vs summary)
+
+---
+
 ## [V4] - 2025-12-08
 
 ### Added

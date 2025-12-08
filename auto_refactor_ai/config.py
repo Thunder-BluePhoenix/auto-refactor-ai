@@ -8,18 +8,19 @@ Supports loading configuration from:
 """
 
 import json
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, List, Optional, Union
 
 
 @dataclass
 class Config:
     """Configuration settings for the analyzer."""
+
     max_function_length: int = 30
     max_parameters: int = 5
     max_nesting_depth: int = 3
-    enabled_rules: list = None  # None means all rules enabled
+    enabled_rules: Optional[List[str]] = None  # None means all rules enabled
 
     def __post_init__(self):
         if self.enabled_rules is None:
@@ -32,9 +33,7 @@ class Config:
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Config":
         """Create config from dictionary."""
-        valid_keys = {
-            "max_function_length", "max_parameters", "max_nesting_depth", "enabled_rules"
-        }
+        valid_keys = {"max_function_length", "max_parameters", "max_nesting_depth", "enabled_rules"}
         filtered_data = {k: v for k, v in data.items() if k in valid_keys}
         return cls(**filtered_data)
 
@@ -47,17 +46,22 @@ def load_toml_config(path: Path) -> Optional[Dict[str, Any]]:
     try:
         # Python 3.11+ has built-in tomllib
         try:
-            import tomllib
+            import tomllib  # type: ignore[import-not-found]
+
             with open(path, "rb") as f:
-                data = tomllib.load(f)
+                data: Dict[str, Any] = tomllib.load(f)
         except ImportError:
             # Fallback: simple TOML parser for basic cases
             data = _parse_simple_toml(path)
 
         # Check if it's pyproject.toml
         if path.name == "pyproject.toml":
-            return data.get("tool", {}).get("auto-refactor-ai", {})
-        return data
+            tool_data = data.get("tool", {})
+            if isinstance(tool_data, dict):
+                result = tool_data.get("auto-refactor-ai", {})
+                return dict(result) if result else {}
+            return {}
+        return dict(data)
 
     except Exception as e:
         print(f"[WARNING] Could not load TOML config from {path}: {e}")
@@ -69,10 +73,10 @@ def _parse_simple_toml(path: Path) -> Dict[str, Any]:
     Simple TOML parser for basic key=value pairs.
     This is a fallback for Python < 3.11 without external dependencies.
     """
-    config = {}
-    current_section = config
+    config: Dict[str, Any] = {}
+    current_section: Dict[str, Any] = config
 
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
 
@@ -94,30 +98,33 @@ def _parse_simple_toml(path: Path) -> Dict[str, Any]:
 
             # Key-value pair
             if "=" in line:
-                key, value = line.split("=", 1)
+                key, value_str = line.split("=", 1)
                 key = key.strip()
-                value = value.strip()
+                value_str = value_str.strip()
+                parsed_value: Union[str, bool, int, float, List[str]] = value_str
 
                 # Parse value
-                if value.lower() in ("true", "false"):
-                    value = value.lower() == "true"
-                elif value.startswith("[") and value.endswith("]"):
+                if value_str.lower() in ("true", "false"):
+                    parsed_value = value_str.lower() == "true"
+                elif value_str.startswith("[") and value_str.endswith("]"):
                     # Simple list parsing
-                    value = [v.strip().strip('"\'') for v in value[1:-1].split(",") if v.strip()]
-                elif value.startswith('"') and value.endswith('"'):
-                    value = value[1:-1]
-                elif value.startswith("'") and value.endswith("'"):
-                    value = value[1:-1]
+                    parsed_value = [
+                        v.strip().strip("\"'") for v in value_str[1:-1].split(",") if v.strip()
+                    ]
+                elif value_str.startswith('"') and value_str.endswith('"'):
+                    parsed_value = value_str[1:-1]
+                elif value_str.startswith("'") and value_str.endswith("'"):
+                    parsed_value = value_str[1:-1]
                 else:
                     try:
-                        value = int(value)
+                        parsed_value = int(value_str)
                     except ValueError:
                         try:
-                            value = float(value)
+                            parsed_value = float(value_str)
                         except ValueError:
-                            pass
+                            parsed_value = value_str
 
-                current_section[key] = value
+                current_section[key] = parsed_value
 
     return config
 
@@ -129,22 +136,24 @@ def load_yaml_config(path: Path) -> Optional[Dict[str, Any]]:
     """
     try:
         try:
-            import yaml
-            with open(path, "r", encoding="utf-8") as f:
-                return yaml.safe_load(f)
+            import yaml  # type: ignore[import-untyped]
+
+            with open(path, encoding="utf-8") as f:
+                result = yaml.safe_load(f)
+                return dict(result) if result else None
         except ImportError:
             # Fallback: Use JSON parser for simple YAML files
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 # This only works for JSON-compatible YAML
                 content = f.read()
-                return json.loads(content)
+                return dict(json.loads(content))
 
     except Exception as e:
         print(f"[WARNING] Could not load YAML config from {path}: {e}")
         return None
 
 
-def find_config_file(start_path: Path = None) -> Optional[Path]:
+def find_config_file(start_path: Optional[Path] = None) -> Optional[Path]:
     """
     Search for a configuration file starting from start_path and moving up.
     Looks for (in order):
@@ -161,7 +170,11 @@ def find_config_file(start_path: Path = None) -> Optional[Path]:
     # Search upward through directories
     while True:
         # Check for dedicated config files
-        for filename in [".auto-refactor-ai.toml", ".auto-refactor-ai.yaml", ".auto-refactor-ai.yml"]:
+        for filename in [
+            ".auto-refactor-ai.toml",
+            ".auto-refactor-ai.yaml",
+            ".auto-refactor-ai.yml",
+        ]:
             config_path = current / filename
             if config_path.exists():
                 return config_path

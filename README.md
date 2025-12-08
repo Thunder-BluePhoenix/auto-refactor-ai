@@ -1,16 +1,16 @@
 # Auto Refactor AI
 
-[![PyPI version](https://img.shields.io/badge/pypi-v0.4.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://img.shields.io/badge/pypi-v0.10.0-blue.svg)](https://pypi.org/project/auto-refactor-ai/)
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/coverage-88%25-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-289%20passed-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/coverage-87%25-brightgreen.svg)]()
 
-A beginner-friendly static analyzer for Python code that detects code quality issues and suggests refactoring opportunities.
+A comprehensive AI-powered static analyzer for Python code with refactoring suggestions, project analysis, and strategic planning.
 
-## Current Version: V4 (0.4.0)
+## Current Version: V10 (0.10.0)
 
-**Production-ready with tests & CI/CD!** V4 adds comprehensive testing, GitHub Actions CI/CD, and pre-commit hooks for automated quality assurance.
+**Production-ready with strategic refactoring plans!** V10 adds `--plan` mode for generating AI-powered refactoring roadmaps with HTML report generation.
 
 ## Features
 
@@ -275,82 +275,43 @@ auto-refactor-ai auto_refactor_ai/ --max-len 50
 
 ## What's New
 
-### V4 (Current - 0.4.0)
+### V10 (Current - 0.10.0)
 
-V4 makes Auto Refactor AI production-ready with comprehensive testing and automation:
+V10 adds strategic refactoring planning with AI-powered insights:
 
-1. **Comprehensive Testing**:
-   - 60+ unit tests with pytest
-   - 88% code coverage (exceeds 80% requirement)
-   - Tests for analyzer, config, and CLI modules
-   - Edge case testing
+1. **Refactor Plan Mode**:
+   - `--plan` flag for strategic refactoring roadmaps
+   - Priority-ranked issues with effort/impact analysis
+   - Quick wins identification
+   - Multi-phase roadmap generation
 
-2. **GitHub Actions CI/CD**:
-   - Automated testing on push and PR
-   - Multi-platform: Ubuntu, Windows, macOS
-   - Multi-version: Python 3.8 - 3.12
-   - Code quality checks (black, ruff, mypy)
-   - Self-analysis job (dogfooding)
+2. **LLM Strategic Advice**:
+   - AI-powered recommendations in plans
+   - Use `--plan --ai-suggestions` for insights
+   - Support for OpenAI, Anthropic, Google, Ollama
 
-3. **Pre-commit Hooks**:
-   - Automatic code formatting
-   - Linting and type checking
-   - Tests run before commits
-   - Self-analysis with strict settings
+3. **HTML Report Generation**:
+   - `--plan-format html` creates styled reports
+   - Dark theme with modern design
+   - Save with `--output report.html`
 
-4. **Code Quality**:
-   - Black for formatting (100-char lines)
-   - Ruff for linting
-   - Mypy for type checking
-   - All configured in pyproject.toml
+4. **Test Coverage**:
+   - 289 tests passing
+   - 87% code coverage
 
-### V3 (0.3.0)
+### Previous Versions
 
-V3 makes Auto Refactor AI a proper pip-installable package:
+- **V9** (0.9.0): Git integration (`--git`, `--staged`), pre-commit hooks
+- **V8** (0.8.0): Project-level duplicate detection, AST hashing
+- **V7** (0.7.0): Auto-apply mode (`--apply`), backup/rollback system
+- **V6** (0.6.0): LLM integration, AI suggestions, 4 providers
+- **V5** (0.5.0): Detailed explanations, refactoring theory
+- **V4** (0.4.0): 60+ tests, GitHub Actions CI/CD, pre-commit hooks
+- **V3** (0.3.0): Pip installable package
+- **V2** (0.2.0): Config files, JSON output
+- **V1** (0.1.0): Multiple rules, severity levels
 
-1. **Pip Installable**:
-   - Install with `pip install auto-refactor-ai`
-   - Global `auto-refactor-ai` command
-   - No need for `python -m` anymore
-
-2. **Professional Package**:
-   - Proper `pyproject.toml` configuration
-   - Console script entry point
-   - MIT License
-   - Ready for PyPI distribution
-
-3. **Enhanced Documentation**:
-   - Complete V1, V2, V3 implementation guides
-   - Publishing guide for PyPI
-   - Verification script for testing
-   - Release checklist
-
-### V2 (0.2.0)
-
-V2 added configuration and output flexibility:
-
-1. **Configuration File Support**:
-   - Auto-discovery of config files
-   - TOML and YAML formats
-   - Integration with `pyproject.toml`
-   - CLI arguments override configs
-
-2. **JSON Output Mode**:
-   - Machine-readable output
-   - Perfect for CI/CD and IDE integration
-   - Structured data with config, summary, and issues
-
-### V1 (0.1.0)
-
-V1 introduced multiple analysis rules:
-
-1. **Three Analysis Rules**:
-   - Rule 1: Function length
-   - Rule 2: Too many parameters
-   - Rule 3: Deep nesting
-
-2. **Severity Levels**: INFO, WARN, CRITICAL
-3. **Better Output**: Sorted by severity with summary
+See [CHANGELOG.md](CHANGELOG.md) for detailed version history.
 
 ## Project Structure
 
@@ -480,20 +441,16 @@ auto-refactor-ai src/ > code_review.txt
 - **V0**: ✅ Single rule (function length), basic CLI
 - **V1**: ✅ Multiple rules, severity levels, improved output
 - **V2**: ✅ Config files & JSON output
-- **V3**: ✅ Pip installable package (CURRENT - v0.3.0)
-- **V4**: 🚧 Tests & CI/CD (NEXT)
-  - pytest test suite with >80% coverage
-  - GitHub Actions workflow
-  - Pre-commit hooks
-  - Code quality checks (black, ruff)
-- **V5**: Detailed explanations for each rule
-- **V6**: AI-powered suggestions using LLMs
-- **V7**: Auto-fix mode with automated refactoring
-- **V8**: Project-level analysis & duplicate detection
-- **V9**: Git integration & smart pre-commit hooks
-- **V10**: Refactor planning mode
-- **V11**: Editor/IDE integration (VS Code, etc.)
-- **V12**: Community-ready release with marketing
+- **V3**: ✅ Pip installable package
+- **V4**: ✅ Tests & CI/CD
+- **V5**: ✅ Detailed explanations for each rule
+- **V6**: ✅ AI-powered suggestions using LLMs
+- **V7**: ✅ Auto-fix mode with automated refactoring
+- **V8**: ✅ Project-level analysis & duplicate detection
+- **V9**: ✅ Git integration & smart pre-commit hooks
+- **V10**: ✅ Refactor planning mode (CURRENT - v0.10.0)
+- **V11**: 🚧 Editor/IDE integration (VS Code, etc.) - NEXT
+- **V12**: 📋 Community-ready release with marketing
 
 ## Learning Path
 

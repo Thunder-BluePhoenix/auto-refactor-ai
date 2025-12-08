@@ -209,59 +209,58 @@ auto-refactor-ai . --max-len 25
 
 ## 🧠 V5 – AI Touch: Explain Issues in Natural Language
 
-**Status:** 🔄 NEXT UP
+**Status:** ✅ COMPLETE (v0.5.0)
 
 **Goal:** Start the "AI" part softly (no LLM yet).
 
+**Achievement:** Comprehensive explanation system with templates, examples, and references.
+
 **Features:**
-- Detailed explanations for each issue
-- Template-based suggestions
-- Best practice recommendations
-- Refactoring hints
-
-**Example Output:**
-```
-[WARN] service.py:42-90  process_order()
-  - 9 parameters detected
-
-Why this matters:
-  Functions with too many parameters are harder to test and reuse.
-
-How to refactor:
-  1. Group related parameters into a dataclass or config object
-  2. Split responsibilities across multiple functions
-  3. Consider using builder pattern for complex objects
-```
+- ✅ Detailed explanations for each issue
+- ✅ Template-based suggestions
+- ✅ Best practice recommendations
+- ✅ Refactoring hints
+- ✅ `--explain` flag for verbose explanations
+- ✅ `--explain-summary` flag for brief tips
+- ✅ 15 new tests
 
 **What You Learn:**
 - Good error message design
 - Refactoring theory (DRY, SRP, cohesion)
 - Documentation practices
 
-**Implementation Tasks:**
-- [ ] Create explanation templates
-- [ ] Add `--explain` flag
-- [ ] Design explanation system
-- [ ] Add refactoring examples
+**Completed Implementation:**
+- [x] Create explanation templates (`explanations.py`)
+- [x] Add `--explain` flag
+- [x] Design explanation system
+- [x] Add refactoring examples
+- [x] Add good/bad code examples
+- [x] Add references to Clean Code, Refactoring Guru
 
 ---
 
 ## 🤖 V6 – AI Suggestions (Real LLM Integration)
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.6.0)
 
 **Goal:** Use an LLM to propose refactored code.
 
+**Achievement:** Full LLM integration with 4 providers, prompt engineering, and cost tracking.
+
 **Features:**
-- `--ai-suggestions` flag
-- LLM-powered refactoring suggestions
-- Support multiple LLM providers (OpenAI, Anthropic, local)
-- Preserve behavior guarantees
-- Show before/after comparisons
+- ✅ `--ai-suggestions` flag
+- ✅ LLM-powered refactoring suggestions
+- ✅ Support for OpenAI, Anthropic, Google, Ollama
+- ✅ Show before/after comparisons
+- ✅ Confidence scoring
+- ✅ Token tracking and cost estimation
+- ✅ 41 new tests (113 total)
 
 **Example:**
 ```bash
 auto-refactor-ai service.py --ai-suggestions
+auto-refactor-ai service.py --ai-suggestions --ai-provider openai
+auto-refactor-ai . --check-providers
 ```
 
 **What You Learn:**
@@ -269,181 +268,146 @@ auto-refactor-ai service.py --ai-suggestions
 - Prompt engineering
 - API error handling
 - Token management
-- Safety considerations
+- Provider abstraction pattern
 
-**Implementation Tasks:**
-- [ ] Add LLM provider abstraction
-- [ ] Implement OpenAI integration
-- [ ] Implement Anthropic integration
-- [ ] Create refactoring prompts
-- [ ] Add API key management
-- [ ] Handle timeouts/errors
-- [ ] Add cost estimation
+**Completed Implementation:**
+- [x] Add LLM provider abstraction (`llm_providers.py`)
+- [x] Implement OpenAI integration
+- [x] Implement Anthropic integration
+- [x] Implement Google Gemini integration
+- [x] Implement Ollama (local) integration
+- [x] Create refactoring prompts
+- [x] Add API key management
+- [x] Handle timeouts/errors
+- [x] Add cost estimation
 
 ---
 
 ## ⚡ V7 – Auto-Refactor Mode (Generate Patches)
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.7.0)
 
 **Goal:** Move from advice → action.
 
+**Achievement:** Full auto-refactor capability with backup, dry-run, and interactive modes.
+
 **Features:**
-- `--apply` flag for automatic fixes
-- Generate unified diff patches
-- Backup original files
-- Dry-run mode
-- Interactive approval
+- ✅ `--apply` flag for automatic fixes
+- ✅ Generate unified diff patches
+- ✅ Backup original files
+- ✅ Dry-run mode
+- ✅ Interactive approval
+- ✅ Rollback capability
+- ✅ 18 new tests (131 total)
 
 **Example:**
 ```bash
-auto-refactor-ai . --apply --backup
-# or
-auto-refactor-ai . --apply --interactive
+auto-refactor-ai . --ai-suggestions --apply --dry-run
+auto-refactor-ai . --ai-suggestions --apply --interactive
+auto-refactor-ai . --ai-suggestions --apply --backup
 ```
 
-**What You Learn:**
-- Parsing & editing files safely
-- Working with diffs (`difflib`)
-- Designing safe destructive actions
-- Backup/restore strategies
-
-**Implementation Tasks:**
-- [ ] Implement diff generation
-- [ ] Create backup system
-- [ ] Add interactive approval
-- [ ] Implement patch application
-- [ ] Add rollback capability
-- [ ] Safety validations
+**Completed Implementation:**
+- [x] Implement diff generation (`difflib.unified_diff`)
+- [x] Create backup system (timestamped)
+- [x] Add interactive approval (y/n/q prompts)
+- [x] Implement patch application
+- [x] Add rollback capability
+- [x] Safety validations
 
 ---
 
 ## 🧩 V8 – Project-Level Refactor Suggestions
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.8.0)
 
 **Goal:** Go beyond single functions.
 
+**Achievement:** Cross-file duplicate detection with AST hashing and architecture recommendations.
+
 **Features:**
-- Detect duplicate logic across files
-- Suggest shared helper modules
-- Identify code smells at project level
-- Architectural recommendations
+- ✅ `--project` flag for project analysis
+- ✅ `--find-duplicates` for duplicate detection
+- ✅ AST normalization and hashing
+- ✅ Duplicate code grouping
+- ✅ Architecture recommendations
+- ✅ 15 new tests (146 total)
 
 **Example:**
-```
-[PROJECT] Duplicate logic detected:
-  - auth/login.py:validate_user()
-  - auth/register.py:check_user()
-
-Suggestion: Extract into auth/validators.py:validate_user_credentials()
+```bash
+auto-refactor-ai myproject/ --project --find-duplicates
+auto-refactor-ai myproject/ --project --min-lines 10 --similarity-threshold 0.9
 ```
 
-**What You Learn:**
-- Code similarity detection
-- AST normalization
-- Cross-file analysis
-- Architecture patterns
-
-**Implementation Tasks:**
-- [ ] Implement AST hashing
-- [ ] Build similarity detector
-- [ ] Create cross-file analyzer
-- [ ] Suggest module extraction
+**Completed Implementation:**
+- [x] Implement AST hashing
+- [x] Build similarity detector
+- [x] Create cross-file analyzer
+- [x] Suggest module extraction
 
 ---
 
 ## 🧰 V9 – Git Integration & Pre-commit Hook
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.9.0)
 
 **Goal:** Make it part of dev workflow.
 
+**Achievement:** Git integration with `--git` and `--staged` flags plus pre-commit hook support.
+
 **Features:**
-- Run only on changed files
-- Pre-commit hook support
-- Git hooks integration
-- Performance optimization
-- Incremental analysis
+- ✅ `--git` flag for modified files
+- ✅ `--staged` flag for staged files
+- ✅ Pre-commit hook configuration
+- ✅ 6 new tests (157 total)
 
 **Example:**
 ```bash
-# In .pre-commit-config.yaml
-repos:
-  - repo: local
-    hooks:
-      - id: auto-refactor-ai
-        name: Auto Refactor AI
-        entry: auto-refactor-ai
-        language: python
-        types: [python]
+# Analyze modified files
+auto-refactor-ai . --git
+
+# Analyze staged files
+auto-refactor-ai . --staged
 ```
 
-**What You Learn:**
-- Git hooks
-- Pre-commit framework
-- Performance optimization
-- Incremental processing
-
-**Implementation Tasks:**
-- [ ] Git integration module
-- [ ] Pre-commit hook config
-- [ ] Changed files detection
-- [ ] Performance profiling
-- [ ] Caching system
+**Completed Implementation:**
+- [x] Git integration module
+- [x] Pre-commit hook config
+- [x] Changed files detection
 
 ---
 
 ## 🧠 V10 – "Refactor Plan" Mode
 
-**Status:** 📋 PLANNED
+**Status:** ✅ COMPLETE (v0.10.0)
 
 **Goal:** Generate a plan, not just line-level suggestions.
 
+**Achievement:** Strategic refactoring plans with LLM advice and HTML reports.
+
 **Features:**
-- `--plan` flag for high-level overview
-- Top N worst functions
-- Complexity hotspots
-- Suggested refactor roadmap
+- ✅ `--plan` flag for high-level overview
+- ✅ Top N worst functions (critical hotspots)
+- ✅ Complexity hotspots with priority scoring
+- ✅ Suggested refactor roadmap (multi-phase)
+- ✅ LLM-powered strategic advice (`--plan --ai-suggestions`)
+- ✅ HTML report generation (`--plan-format html`)
+- ✅ File output support (`--output report.html`)
 
 **Example:**
 ```bash
 auto-refactor-ai . --plan
+auto-refactor-ai . --plan --plan-format html -o report.html
+auto-refactor-ai . --plan --ai-suggestions  # With LLM advice
 ```
 
-**Output:**
-```
-Refactor Plan for my_project:
-
-Priority Issues:
-1. [CRITICAL] order_service.py:process_orders (120 lines, 7 params, complexity 28)
-2. [HIGH] utils.py - Contains 12 unrelated utilities, split into focused modules
-3. [HIGH] user_service.py - Scattered database calls, introduce UserRepository
-
-Metrics:
-- Total functions: 234
-- Functions needing refactor: 45 (19%)
-- Average complexity: 8.2
-- Files with issues: 12
-
-Recommended Actions:
-1. Refactor top 5 critical functions first
-2. Extract repeated validation logic to validators.py
-3. Introduce repository pattern for data access
-```
-
-**What You Learn:**
-- Project-level metrics
-- Priority ranking algorithms
-- LLM for planning
-- Report generation
-
-**Implementation Tasks:**
-- [ ] Build metrics aggregator
-- [ ] Implement priority ranking
-- [ ] Create plan generator
-- [ ] Add LLM integration for insights
-- [ ] Generate HTML reports
+**Completed Implementation:**
+- [x] Build metrics aggregator
+- [x] Implement priority ranking
+- [x] Create plan generator
+- [x] Add LLM integration for insights
+- [x] Generate HTML reports
+- [x] 289 tests, 87% coverage
 
 ---
 

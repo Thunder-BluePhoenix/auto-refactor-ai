@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Refactoring Plan Report</title>
+
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+                   max-width: 900px; margin: 40px auto; padding: 20px; background: #0d1117; color: #c9d1d9; }
+            h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+            h2 { color: #8b949e; margin-top: 30px; }
+            .summary { background: #161b22; padding: 15px; border-radius: 6px; border-left: 4px solid #58a6ff; }
+            .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin: 20px 0; }
+            .metric { background: #21262d; padding: 15px; border-radius: 6px; text-align: center; }
+            .metric .value { font-size: 2em; font-weight: bold; }
+            .critical { color: #f85149; }
+            .warning { color: #d29922; }
+            .info { color: #58a6ff; }
+            .hotspot { background: #21262d; padding: 15px; margin: 10px 0; border-radius: 6px; border-left: 3px solid #f85149; }
+            .quick-win { background: #21262d; padding: 10px 15px; margin: 5px 0; border-radius: 6px; border-left: 3px solid #3fb950; }
+            .roadmap { list-style: none; padding: 0; }
+            .roadmap li { padding: 10px 15px; margin: 5px 0; background: #21262d; border-radius: 6px; }
+            .roadmap li::before { content: '→ '; color: #58a6ff; }
+            .ai-advice { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); 
+                         padding: 20px; border-radius: 6px; border: 1px solid #374151; margin-top: 20px; }
+            .ai-advice h2 { color: #a78bfa; }
+        </style>
+        
+</head>
+<body>
+  <h1>🏗️ Refactoring Plan</h1>
+  <div class='summary'>Analyzed 10 files. Found 57 issues. Codebase Health: Critical.</div>
+
+  <h2>📊 Metrics</h2>
+  <div class='metric-grid'>
+    <div class='metric'><div class='value'>10</div>Files</div>
+    <div class='metric'><div class='value critical'>13</div>Critical</div>
+    <div class='metric'><div class='value warning'>17</div>Warnings</div>
+    <div class='metric'><div class='value info'>2</div>Duplicates</div>
+  </div>
+
+  <h2>🛣️ Strategic Roadmap</h2>
+  <ul class='roadmap'>
+    <li>Phase 1: Architecture - Consolidate 2 duplicate groups.</li>
+    <li>Phase 2: Quick Wins - Fix 5 low-effort issues to build momentum.</li>
+    <li>Phase 3: Deep Dives - Refactor the top critical hotspots.</li>
+    <li>Phase 4: Maintenance - Address remaining lower priority warnings.</li>
+  </ul>
+
+  <h2>🔥 Critical Hotspots</h2>
+  <div class='hotspot'>
+    <strong>_parse_simple_toml</strong> <em>(auto_refactor_ai\config.py)</em>
+    <p>Function '_parse_simple_toml' has 7 levels of nesting (max: 3). High nesting makes code harder to understand. Consider extracting nested logic into helper functions.</p>
+    <small>Impact: High | Effort: High</small>
+  </div>
+  <div class='hotspot'>
+    <strong>get_ai_suggestions</strong> <em>(auto_refactor_ai\ai_suggestions.py)</em>
+    <p>Function 'get_ai_suggestions' is 68 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.</p>
+    <small>Impact: High | Effort: High</small>
+  </div>
+  <div class='hotspot'>
+    <strong>format_ai_suggestion</strong> <em>(auto_refactor_ai\ai_suggestions.py)</em>
+    <p>Function 'format_ai_suggestion' is 57 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.</p>
+    <small>Impact: High | Effort: High</small>
+  </div>
+  <div class='hotspot'>
+    <strong>process_single_refactoring</strong> <em>(auto_refactor_ai\auto_refactor.py)</em>
+    <p>Function 'process_single_refactoring' is 66 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.</p>
+    <small>Impact: High | Effort: High</small>
+  </div>
+  <div class='hotspot'>
+    <strong>auto_refactor</strong> <em>(auto_refactor_ai\auto_refactor.py)</em>
+    <p>Function 'auto_refactor' is 80 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.</p>
+    <small>Impact: High | Effort: High</small>
+  </div>
+
+  <h2>⚡ Quick Wins</h2>
+  <div class='quick-win'>
+    <strong>check_too_many_parameters:</strong> Function 'check_too_many_parameters' is 38 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.
+  </div>
+  <div class='quick-win'>
+    <strong>format_diff_preview:</strong> Function 'format_diff_preview' is 39 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.
+  </div>
+  <div class='quick-win'>
+    <strong>handle_ai_suggestions:</strong> Function 'handle_ai_suggestions' is 38 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.
+  </div>
+  <div class='quick-win'>
+    <strong>_format_markdown:</strong> Function '_format_markdown' is 38 lines long (max: 25). Consider splitting it into smaller functions with single responsibilities.
+  </div>
+  <div class='quick-win'>
+    <strong>format_diff_preview:</strong> Function 'format_diff_preview' has 4 levels of nesting (max: 3). High nesting makes code harder to understand. Consider extracting nested logic into helper functions.
+  </div>
+
+</body>
+</html>

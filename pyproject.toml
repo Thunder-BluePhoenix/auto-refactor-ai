@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "auto-refactor-ai"
-version = "0.4.0"
-description = "A beginner-friendly static analyzer for Python code with configurable rules and AI-ready architecture"
+version = "0.10.0"
+description = "AI-powered static analyzer for Python with LLM suggestions, project analysis, git integration, and refactoring plans"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
-keywords = ["refactoring", "static-analysis", "code-quality", "linting", "ast", "complexity"]
+keywords = ["refactoring", "static-analysis", "code-quality", "linting", "ast", "complexity", "ai", "llm", "gpt"]
 authors = [
     {name = "Auto Refactor AI Contributors", email = "auto-refactor-ai@example.com"}
 ]
@@ -42,6 +42,22 @@ dev = [
     "mypy>=1.0",
     "pre-commit>=3.0",
 ]
+# V6: AI/LLM provider dependencies
+ai = [
+    "openai>=1.0.0",
+]
+ai-anthropic = [
+    "anthropic>=0.18.0",
+]
+ai-google = [
+    "google-generativeai>=0.4.0",
+]
+ai-all = [
+    "openai>=1.0.0",
+    "anthropic>=0.18.0",
+    "google-generativeai>=0.4.0",
+]
+
 
 [project.scripts]
 auto-refactor-ai = "auto_refactor_ai.cli:main"
@@ -117,6 +133,8 @@ exclude = '''
 [tool.ruff]
 line-length = 100
 target-version = "py38"
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -131,11 +149,11 @@ ignore = [
     "E501",  # line too long (handled by black)
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]  # Unused imports in __init__.py
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false

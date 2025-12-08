@@ -1,11 +1,12 @@
 import ast
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
-from typing import List
+from typing import Any, Dict, List, Optional
 
 
 class Severity(Enum):
     """Severity levels for code issues."""
+
     INFO = "INFO"
     WARN = "WARN"
     CRITICAL = "CRITICAL"
@@ -14,6 +15,7 @@ class Severity(Enum):
 @dataclass
 class Issue:
     """Represents a code quality issue found during analysis."""
+
     severity: Severity
     file: str
     function_name: str
@@ -21,7 +23,7 @@ class Issue:
     end_line: int
     rule_name: str
     message: str
-    details: dict = None  # Optional metadata about the issue
+    details: Optional[Dict[Any, Any]] = field(default_factory=dict)
 
     def to_dict(self):
         """Convert issue to dictionary for JSON serialization."""
@@ -33,7 +35,7 @@ class Issue:
             "end_line": self.end_line,
             "rule_name": self.rule_name,
             "message": self.message,
-            "details": self.details or {}
+            "details": self.details or {},
         }
 
 
@@ -69,7 +71,9 @@ class NestingVisitor(ast.NodeVisitor):
         self.current_depth -= 1
 
 
-def check_function_length(node: ast.FunctionDef, path: str, max_length: int = 30) -> Issue:
+def check_function_length(
+    node: ast.FunctionDef, path: str, max_length: int = 30
+) -> Optional[Issue]:
     """Rule 1: Check if function is too long."""
     start = node.lineno
     end = getattr(node, "end_lineno", start)
@@ -97,22 +101,24 @@ def check_function_length(node: ast.FunctionDef, path: str, max_length: int = 30
             end_line=end,
             rule_name="function-too-long",
             message=message,
-            details={"length": length, "max_length": max_length}
+            details={"length": length, "max_length": max_length},
         )
     return None
 
 
-def check_too_many_parameters(node: ast.FunctionDef, path: str, max_params: int = 5) -> Issue:
+def check_too_many_parameters(
+    node: ast.FunctionDef, path: str, max_params: int = 5
+) -> Optional[Issue]:
     """Rule 2: Check if function has too many parameters."""
     start = node.lineno
     end = getattr(node, "end_lineno", start)
 
     # Count all parameters (args, kwargs, kwonly, etc.)
     param_count = (
-        len(node.args.args) +
-        len(node.args.kwonlyargs) +
-        (1 if node.args.vararg else 0) +
-        (1 if node.args.kwarg else 0)
+        len(node.args.args)
+        + len(node.args.kwonlyargs)
+        + (1 if node.args.vararg else 0)
+        + (1 if node.args.kwarg else 0)
     )
 
     if param_count > max_params:
@@ -137,12 +143,12 @@ def check_too_many_parameters(node: ast.FunctionDef, path: str, max_params: int 
             end_line=end,
             rule_name="too-many-parameters",
             message=message,
-            details={"param_count": param_count, "max_params": max_params}
+            details={"param_count": param_count, "max_params": max_params},
         )
     return None
 
 
-def check_deep_nesting(node: ast.FunctionDef, path: str, max_depth: int = 3) -> Issue:
+def check_deep_nesting(node: ast.FunctionDef, path: str, max_depth: int = 3) -> Optional[Issue]:
     """Rule 3: Check if function has too much nesting."""
     start = node.lineno
     end = getattr(node, "end_lineno", start)
@@ -174,16 +180,13 @@ def check_deep_nesting(node: ast.FunctionDef, path: str, max_depth: int = 3) -> 
             end_line=end,
             rule_name="deep-nesting",
             message=message,
-            details={"nesting_depth": depth, "max_depth": max_depth}
+            details={"nesting_depth": depth, "max_depth": max_depth},
         )
     return None
 
 
 def analyze_file(
-    path: str,
-    max_function_length: int = 30,
-    max_parameters: int = 5,
-    max_nesting_depth: int = 3
+    path: str, max_function_length: int = 30, max_parameters: int = 5, max_nesting_depth: int = 3
 ) -> List[Issue]:
     """
     Analyze a Python file and return a list of code quality issues.
@@ -198,7 +201,7 @@ def analyze_file(
         List of Issue objects found in the file
     """
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             source = f.read()
     except Exception as e:
         print(f"[ERROR] Cannot read {path}: {e}")

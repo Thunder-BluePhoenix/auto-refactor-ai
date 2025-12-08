@@ -435,20 +435,418 @@ def analyze_with_rules(
 
 ---
 
-### Class: `LLMProvider` (V6)
+### Class: `LLMProvider` (V6) ✅
 
-**Status:** Planned
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
 
 ```python
-class LLMProvider(ABC):
+class LLMProvider(Enum):
+    """Supported LLM providers."""
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    GOOGLE = "google"
+    OLLAMA = "ollama"
+```
+
+---
+
+### Class: `LLMConfig` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+@dataclass
+class LLMConfig:
+    """Configuration for LLM providers."""
+    provider: LLMProvider = LLMProvider.OPENAI
+    model: str = "gpt-4o-mini"
+    api_key: Optional[str] = None
+    base_url: Optional[str] = None
+    temperature: float = 0.3
+    max_tokens: int = 2000
+    timeout: int = 60
+
+    @classmethod
+    def from_env(cls, provider: LLMProvider = LLMProvider.OPENAI) -> "LLMConfig":
+        """Create config from environment variables."""
+        ...
+```
+
+---
+
+### Class: `BaseLLMProvider` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+class BaseLLMProvider(ABC):
+    """Base class for LLM providers."""
+
+    def __init__(self, config: LLMConfig): ...
+
     @abstractmethod
-    async def suggest_refactor(
+    def generate(self, prompt: str, system_prompt: Optional[str] = None) -> LLMResponse:
+        """Generate a response from the LLM."""
+        ...
+
+    def is_available(self) -> bool:
+        """Check if the provider is configured and available."""
+        ...
+
+    def get_refactoring_suggestion(
         self,
         code: str,
-        issue: Issue
-    ) -> str:
-        """Get AI-powered refactoring suggestion."""
-        pass
+        issue_type: str,
+        issue_message: str,
+        function_name: str
+    ) -> RefactoringSuggestion:
+        """Generate a refactoring suggestion for the given code."""
+        ...
+```
+
+**Implementations:** `OpenAIProvider`, `AnthropicProvider`, `GoogleProvider`, `OllamaProvider`
+
+---
+
+### Function: `get_provider` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+def get_provider(config: LLMConfig) -> BaseLLMProvider:
+    """Factory function to get appropriate provider based on config."""
+    ...
+```
+
+---
+
+### Function: `check_provider_availability` (V6) ✅
+
+**Status:** Complete
+
+**Module:** `auto_refactor_ai.llm_providers`
+
+```python
+def check_provider_availability() -> Dict[str, bool]:
+    """Check which providers are available based on API keys and packages."""
+    ...
+```
+
+---
+
+## 🤖 Module: `auto_refactor_ai.ai_suggestions` (V6) ✅
+
+AI-powered code refactoring suggestions.
+
+---
+
+### Function: `extract_function_source`
+
+```python
+def extract_function_source(
+    file_path: str,
+    start_line: int,
+    end_line: int
+) -> str:
+    """Extract function source code from a file."""
+    ...
+```
+
+---
+
+### Function: `get_ai_suggestions`
+
+```python
+def get_ai_suggestions(
+    issues: List[Issue],
+    config: Optional[LLMConfig] = None,
+    max_issues: int = 5,
+    skip_info: bool = True,
+) -> AIAnalysisSummary:
+    """Get AI suggestions for a list of issues."""
+    ...
+```
+
+---
+
+### Function: `format_ai_suggestion`
+
+```python
+def format_ai_suggestion(
+    result: AIAnalysisResult,
+    show_original: bool = True
+) -> str:
+    """Format an AI suggestion for display."""
+    ...
+```
+
+---
+
+### Function: `print_ai_suggestions`
+
+```python
+def print_ai_suggestions(
+    summary: AIAnalysisSummary,
+    show_original: bool = True
+) -> None:
+    """Print all AI suggestions to stdout."""
+    ...
+```
+
+---
+
+### Class: `AIAnalysisResult`
+
+```python
+@dataclass
+class AIAnalysisResult:
+    """Result of AI analysis for a single issue."""
+    issue: Issue
+    suggestion: RefactoringSuggestion
+    original_function_code: str
+    tokens_used: int = 0
+    cost_estimate: float = 0.0
+```
+
+---
+
+### Class: `AIAnalysisSummary`
+
+```python
+@dataclass
+class AIAnalysisSummary:
+    """Summary of AI analysis for all issues."""
+    results: List[AIAnalysisResult]
+    total_tokens: int = 0
+    total_cost: float = 0.0
+    provider: str = ""
+    model: str = ""
+    errors: List[str]
+
+    @property
+    def success_count(self) -> int: ...
+
+    @property
+    def error_count(self) -> int: ...
+```
+
+---
+
+## 🔧 Module: `auto_refactor_ai.auto_refactor` (V7) ✅
+
+Auto-refactor functionality for applying AI suggestions.
+
+---
+
+### Class: `RefactorResult`
+
+```python
+@dataclass
+class RefactorResult:
+    """Result of a single refactoring operation."""
+    file_path: str
+    function_name: str
+    original_code: str
+    refactored_code: str
+    start_line: int
+    end_line: int
+    backup_path: Optional[str] = None
+    diff: str = ""
+    applied: bool = False
+    skipped: bool = False
+    error: Optional[str] = None
+```
+
+---
+
+### Class: `RefactorSummary`
+
+```python
+@dataclass
+class RefactorSummary:
+    """Summary of all refactoring operations."""
+    results: List[RefactorResult]
+    backup_dir: Optional[str]
+    dry_run: bool
+
+    @property
+    def total_count(self) -> int: ...
+    @property
+    def applied_count(self) -> int: ...
+    @property
+    def skipped_count(self) -> int: ...
+    @property
+    def error_count(self) -> int: ...
+```
+
+---
+
+### Function: `generate_diff`
+
+```python
+def generate_diff(
+    original: str,
+    refactored: str,
+    file_path: str = "file.py",
+    context_lines: int = 3
+) -> str:
+    """Generate a unified diff between original and refactored code."""
+    ...
+```
+
+---
+
+### Function: `create_backup`
+
+```python
+def create_backup(file_path: str, backup_dir: str) -> str:
+    """Create a backup of a file before modification."""
+    ...
+```
+
+---
+
+### Function: `apply_refactoring`
+
+```python
+def apply_refactoring(
+    file_path: str,
+    original_function: str,
+    refactored_code: str,
+    start_line: int,
+    end_line: int
+) -> Tuple[bool, Optional[str]]:
+    """Apply refactored code to a file."""
+    ...
+```
+
+---
+
+### Function: `rollback_file`
+
+```python
+def rollback_file(
+    file_path: str,
+    backup_path: str
+) -> Tuple[bool, Optional[str]]:
+    """Rollback a file to its backup version."""
+    ...
+```
+
+---
+
+### Function: `auto_refactor`
+
+```python
+def auto_refactor(
+    ai_summary: AIAnalysisSummary,
+    dry_run: bool = True,
+    interactive: bool = False,
+    backup_dir: str = ".auto-refactor-backup",
+    create_backups: bool = True,
+) -> RefactorSummary:
+    """Apply AI suggestions to refactor code."""
+    ...
+```
+
+---
+
+---
+
+## 📦 Module: `auto_refactor_ai.project_analyzer` (V8)
+
+**Added in V8 (0.8.0)**
+
+Project-level analysis module for detecting cross-file patterns and duplicates.
+
+### Class: `FunctionSignature`
+
+```python
+@dataclass
+class FunctionSignature:
+    file: str           # Path to the file
+    name: str           # Function name
+    start_line: int     # Start line number
+    end_line: int       # End line number
+    parameters: List[str] # List of parameter names
+    body_hash: str      # MD5 hash of normalized AST
+    parameter_count: int
+    line_count: int
+
+    @property
+    def location(self) -> str: ...
+    @property
+    def qualified_name(self) -> str: ...
+```
+
+---
+
+### Class: `DuplicateGroup`
+
+```python
+@dataclass
+class DuplicateGroup:
+    functions: List[FunctionSignature]
+    similarity: float       # 0.0 to 1.0
+    suggested_name: str     # Suggested name for consolidated function
+    suggested_module: str   # Suggested module path for extraction
+
+    @property
+    def count(self) -> int: ...
+    @property
+    def files(self) -> Set[str]: ...
+    @property
+    def potential_savings(self) -> int: ...
+```
+
+---
+
+### Class: `ProjectAnalysis`
+
+```python
+@dataclass
+class ProjectAnalysis:
+    root_path: str
+    files_analyzed: int
+    functions_found: int
+    duplicates: List[DuplicateGroup]
+    recommendations: List[str]
+```
+
+---
+
+### Function: `find_duplicates`
+
+```python
+def find_duplicates(
+    functions: List[FunctionSignature],
+    threshold: float = 0.8,
+    min_lines: int = 5
+) -> List[DuplicateGroup]:
+    """Find duplicate/similar functions in a list of signatures."""
+    ...
+```
+
+---
+
+### Function: `analyze_project`
+
+```python
+def analyze_project(
+    root_path: str,
+    min_lines: int = 5,
+    similarity_threshold: float = 0.8
+) -> ProjectAnalysis:
+    """Analyze a project directory for duplicates and patterns."""
+    ...
 ```
 
 ---

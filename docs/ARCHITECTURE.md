@@ -13,14 +13,26 @@ auto-refactor-ai/
 │   ├── __init__.py            # Package initialization, exports main()
 │   ├── __main__.py            # Entry point for python -m auto_refactor_ai
 │   ├── analyzer.py            # Core analysis logic (V0-V4)
-│   ├── cli.py                 # Command-line interface (V0-V4)
-│   └── config.py              # Configuration management (V2+)
+│   ├── cli.py                 # Command-line interface (V0-V6)
+│   ├── config.py              # Configuration management (V2+)
+│   ├── explanations.py        # Template-based explanations (V5)
+│   ├── llm_providers.py       # LLM provider abstraction (V6)
+│   ├── ai_suggestions.py      # AI-powered suggestions (V6)
+│   ├── auto_refactor.py       # Auto-refactor with apply (V7)
+│   ├── project_analyzer.py    # Project-level analysis (V8)
+│   └── git_utils.py           # Git integration (V9)
 │
-├── tests/                     # Test suite (V4+) - 60 tests, 88% coverage
+├── tests/                     # Test suite (V4+) - 157 tests
 │   ├── __init__.py           # Test package initialization
 │   ├── test_analyzer.py      # 26 tests - Core analysis tests
 │   ├── test_config.py        # 22 tests - Configuration tests
-│   └── test_cli.py           # 12 tests - CLI interface tests
+│   ├── test_cli.py           # 14 tests - CLI interface tests
+│   ├── test_explanations.py  # 15 tests - Explanations tests (V5)
+│   ├── test_llm_providers.py # 26 tests - LLM provider tests (V6)
+│   ├── test_ai_suggestions.py # 10 tests - AI suggestions (V6)
+│   ├── test_auto_refactor.py  # 18 tests - Auto-refactor (V7)
+│   ├── test_project_analyzer.py # 18 tests - Project analysis (V8)
+│   └── test_git_utils.py      # 6 tests - Git integration (V9)
 │
 ├── test_files/               # Sample files for manual testing
 │   ├── README.md             # Test files documentation
@@ -44,7 +56,12 @@ auto-refactor-ai/
 │       ├── V1_GUIDE.md
 │       ├── V2_GUIDE.md
 │       ├── V3_GUIDE.md
-│       └── V4_GUIDE.md
+│       ├── V4_GUIDE.md
+│       ├── V5_GUIDE.md
+│       ├── V6_GUIDE.md
+│       ├── V7_GUIDE.md
+│       ├── V8_GUIDE.md
+│       └── V9_GUIDE.md
 │
 ├── .github/                   # GitHub configuration (V4+)
 │   └── workflows/
@@ -70,9 +87,9 @@ auto-refactor-ai/
 
 ## 🏗️ Core Components
 
-### Current Architecture (V4 - 0.4.0)
+### Current Architecture (V9 - 0.9.0)
 
-The project has evolved through four major versions, each adding significant functionality while maintaining backward compatibility.
+The project has evolved through nine major versions, each adding significant functionality while maintaining backward compatibility.
 
 ### 1. `analyzer.py` - The Analysis Engine
 
@@ -438,42 +455,68 @@ class Config:
 
 ---
 
-### LLM Integration (V6)
+### LLM Integration (V6) ✅
 
-**Provider Abstraction:**
+**Status:** Complete in v0.6.0
+
+**Provider Abstraction (`llm_providers.py`):**
 ```python
-class LLMProvider(ABC):
-    @abstractmethod
-    async def suggest_refactor(self, code: str, issue: Issue) -> str:
-        """Get refactoring suggestion from LLM."""
-        pass
+class LLMProvider(Enum):
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    GOOGLE = "google"
+    OLLAMA = "ollama"
 
-class OpenAIProvider(LLMProvider):
-    def __init__(self, api_key: str):
-        self.client = OpenAI(api_key=api_key)
+@dataclass
+class LLMConfig:
+    provider: LLMProvider = LLMProvider.OPENAI
+    model: str = "gpt-4o-mini"
+    api_key: Optional[str] = None
+    temperature: float = 0.3
+    max_tokens: int = 2000
 
-    async def suggest_refactor(self, code: str, issue: Issue) -> str:
-        response = await self.client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": REFACTOR_PROMPT},
-                {"role": "user", "content": f"Code:\n{code}\n\nIssue: {issue.message}"}
-            ]
-        )
-        return response.choices[0].message.content
+@dataclass
+class RefactoringSuggestion:
+    original_code: str
+    refactored_code: str
+    explanation: str
+    confidence: float = 0.0
+    changes_summary: List[str]
+
+class BaseLLMProvider(ABC):
+    def generate(self, prompt: str, system_prompt: Optional[str] = None) -> LLMResponse: ...
+    def get_refactoring_suggestion(self, code, issue_type, message, func_name) -> RefactoringSuggestion: ...
+    def is_available(self) -> bool: ...
+
+class OpenAIProvider(BaseLLMProvider): ...
+class AnthropicProvider(BaseLLMProvider): ...
+class GoogleProvider(BaseLLMProvider): ...
+class OllamaProvider(BaseLLMProvider): ...
+
+def get_provider(config: LLMConfig) -> BaseLLMProvider: ...
+def check_provider_availability() -> Dict[str, bool]: ...
+```
+
+**AI Suggestions (`ai_suggestions.py`):**
+```python
+def extract_function_source(file_path: str, start_line: int, end_line: int) -> str: ...
+def get_ai_suggestions(issues, config, max_issues=5, skip_info=True) -> AIAnalysisSummary: ...
+def format_ai_suggestion(result: AIAnalysisResult, show_original=True) -> str: ...
+def print_ai_suggestions(summary: AIAnalysisSummary) -> None: ...
+def get_provider_status_message() -> str: ...
 ```
 
 ---
 
-## 🧪 Testing Architecture (V4)
+## 🧪 Testing Architecture (V9)
 
 ### Test Suite Overview
 
 **Statistics:**
-- **Total Tests:** 60
-- **Coverage:** 88% (exceeds 80% requirement)
-- **Test Modules:** 3 (analyzer, config, CLI)
-- **Test Classes:** 19
+- **Total Tests:** 157
+- **Coverage:** 80%+ (exceeds 80% requirement)
+- **Test Modules:** 9 (analyzer, config, CLI, explanations, llm_providers, ai_suggestions, auto_refactor, project_analyzer, git_utils)
+- **Test Classes:** 45+
 - **CI/CD:** GitHub Actions on 15 combinations (3 OS × 5 Python versions)
 
 **Test Structure:**
@@ -496,11 +539,35 @@ tests/
 │   ├── TestFindConfigFile    # Config discovery
 │   └── TestLoadConfig        # Full integration
 │
-└── test_cli.py               # 12 tests - CLI interface
-    ├── TestPrintIssues       # Text output formatting
-    ├── TestPrintSummary      # Summary statistics
-    ├── TestPrintJson         # JSON output
-    └── TestMainCLI           # Full CLI integration
+├── test_cli.py               # 14 tests - CLI interface
+│   ├── TestPrintIssues       # Text output formatting
+│   ├── TestPrintSummary      # Summary statistics
+│   ├── TestPrintJson         # JSON output
+│   └── TestMainCLI           # Full CLI integration
+│
+├── test_explanations.py      # 15 tests - V5 explanations
+│   ├── TestGetExplanation
+│   ├── TestFormatExplanation
+│   ├── TestGetSeverityGuidance
+│   └── TestExplanationContent
+│
+├── test_llm_providers.py     # 26 tests - V6 LLM providers
+│   ├── TestLLMProvider       # Provider enum tests
+│   ├── TestLLMConfig         # Configuration tests
+│   ├── TestLLMResponse       # Response handling
+│   ├── TestOpenAIProvider    # OpenAI integration
+│   ├── TestAnthropicProvider # Anthropic integration
+│   ├── TestGoogleProvider    # Google Gemini integration
+│   ├── TestOllamaProvider    # Local Ollama integration
+│   ├── TestGetProvider       # Factory pattern tests
+│   ├── TestResponseParsing   # LLM response parsing
+│   └── TestCheckProviderAvailability
+│
+└── test_ai_suggestions.py    # 10 tests - V6 AI suggestions
+    ├── TestExtractFunctionSource
+    ├── TestAIAnalysisResult
+    ├── TestAIAnalysisSummary
+    └── TestFormatAISuggestion
 ```
 
 ### Testing Patterns
@@ -698,11 +765,13 @@ Display Results
 | `ruff` | Fast linting | V4 | ✅ Active |
 | `mypy` | Type checking | V4 | ✅ Active |
 | `pre-commit` | Git hooks | V4 | ✅ Active |
-| `openai` / `anthropic` | LLM integration | V6 | 📅 Planned |
+| `openai` | OpenAI LLM integration | V6 | ✅ Active |
+| `anthropic` | Anthropic Claude integration | V6 | ✅ Active |
+| `google-generativeai` | Google Gemini integration | V6 | ✅ Active |
 | `difflib` | Generate patches | V7 | 📅 Planned |
 | `gitpython` | Git integration | V9 | 📅 Planned |
 
-**Zero Runtime Dependencies**: The core package uses only Python standard library. Development dependencies are optional (`pip install -e ".[dev]"`).
+**Zero Runtime Dependencies**: The core package uses only Python standard library. AI dependencies are optional (`pip install auto-refactor-ai[ai-all]`).
 
 ---
 

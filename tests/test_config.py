@@ -1,15 +1,14 @@
 """Tests for config module."""
 
-import pytest
 import tempfile
 from pathlib import Path
 
 from auto_refactor_ai.config import (
     Config,
+    _parse_simple_toml,
+    find_config_file,
     load_config,
     load_toml_config,
-    find_config_file,
-    _parse_simple_toml,
 )
 
 
@@ -299,10 +298,12 @@ max_nesting_depth = 5
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir_path = Path(tmpdir)
             config_file = tmpdir_path / ".auto-refactor-ai.toml"
-            config_file.write_text("""
+            config_file.write_text(
+                """
 max_function_length = 45
 max_parameters = 8
-""")
+"""
+            )
 
             # Create a subdirectory to test search
             subdir = tmpdir_path / "src"

@@ -66,6 +66,72 @@ This directory contains test files to validate the auto-refactor-ai analyzer.
   - Unicode function names
 - **Expected Results**: Varies by case
 
+### `test_ai_refactoring.py` (V7+)
+- **Purpose**: Functions ideal for AI refactoring suggestions
+- **Contains**:
+  - Complex functions with multiple violations
+  - Before/after refactoring examples
+  - OrderConfig pattern demonstration
+  - Guard clause transformation examples
+- **Expected Results**:
+  - `calculate_order_total`: CRITICAL (8 params)
+  - `validate_user_data`: WARN (5 levels nesting)
+  - `process_data_pipeline`: INFO (35+ lines)
+  - `analyze_sales_report`: Multiple CRITICAL issues
+
+### `test_real_world_patterns.py` (V7+)
+- **Purpose**: Realistic production code patterns
+- **Contains**:
+  - API handlers with mixed concerns
+  - CSV processors with configuration
+  - Statistical calculations with nesting
+  - Form validation with excessive nesting
+- **Expected Results**: Mix of WARN and CRITICAL issues
+
+### test_modern_python.py (New - V7)
+- Modern Python 3.10+ features
+- Async/await patterns
+- Pattern matching
+- Dataclasses with complex logic
+
+---
+
+### test_api_patterns.py (New - V9)
+- API/web service anti-patterns
+- `fetch_user_data` - Too many parameters (6)
+- `process_webhook` - Deep nesting (5 levels)
+- `validate_api_request` - Too many parameters (7)
+- `build_complex_query` - 9 parameters, 37 lines
+
+### test_data_processing.py (New - V9)
+- ETL and analytics patterns
+- `calculate_statistics` - 62 lines (should be split)
+- `validate_record` - 7 levels of nesting
+- `parse_nested_config` - 5 levels of nesting
+
+### test_clean_code.py (New - V9)
+- **Clean code examples - NO issues expected**
+- Short, focused functions
+- Proper use of early returns
+- Well-structured class
+
+---
+
+### `test_duplicates_a.py` (V8+)
+- **Purpose**: Duplicate detection testing
+- **Contains**:
+  - Intentional duplicate functions
+  - Unique functions for comparison
+  - Companion to `test_duplicates_b.py`
+- **Expected Results**: Detected as duplicates with `--project` flag
+
+### `test_duplicates_b.py` (V8+)
+- **Purpose**: Companion file for duplicate detection
+- **Contains**:
+  - Functions with same AST structure as `test_duplicates_a.py`
+  - Different variable/function names (same logic)
+- **Expected Results**: Matches detected with `--project` flag
+
 ### `sample_test.py` (Original V0 test file)
 - **Purpose**: Original test file from V0
 - **Contains**: Long functions with comments

@@ -1,18 +1,17 @@
 """Tests for analyzer module."""
 
 import ast
-import pytest
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 from auto_refactor_ai.analyzer import (
+    Issue,
+    NestingVisitor,
+    Severity,
     analyze_file,
+    check_deep_nesting,
     check_function_length,
     check_too_many_parameters,
-    check_deep_nesting,
-    Issue,
-    Severity,
-    NestingVisitor,
 )
 
 
