@@ -1,16 +1,13 @@
 """V10 Refactor Planner extended tests."""
 
-import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
+import pytest
+
+from auto_refactor_ai.analyzer import Issue, Severity
 from auto_refactor_ai.refactor_planner import (
     RefactorPlanner,
-    RefactorPlan,
-    RefactorItem,
-    PlanMetric,
 )
-from auto_refactor_ai.analyzer import Issue, Severity
 
 
 @pytest.fixture

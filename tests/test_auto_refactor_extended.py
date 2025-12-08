@@ -44,7 +44,7 @@ class TestApplyRefactoringExtended:
         test_file.write_text(original_content)
 
         # Apply change to foo function only
-        result = apply_refactoring(
+        apply_refactoring(
             str(test_file),
             "def foo():\n    pass\n",
             "def foo():\n    return 1\n",

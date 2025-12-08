@@ -182,7 +182,7 @@ class TestFindConfigFile:
         empty_dir.mkdir()
 
         # Override default to use our temp dir
-        result = find_config_file(empty_dir)
+        find_config_file(empty_dir)
         # May find pyproject.toml in project root or return None
         # Just check it doesn't crash
 

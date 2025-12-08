@@ -239,7 +239,7 @@ class RefactorPlanner:
             # Build context for LLM
             context = self._build_llm_context(hotspots, quick_wins)
 
-            system_prompt = """You are a senior software architect providing strategic 
+            system_prompt = """You are a senior software architect providing strategic
 refactoring advice. Based on the codebase analysis, provide:
 1. Top 3 priority recommendations (be specific)
 2. Potential risks to watch for
@@ -261,7 +261,7 @@ Keep your response concise (under 200 words)."""
     ) -> str:
         """Build context string for LLM."""
         lines = [
-            f"Codebase Analysis Summary:",
+            "Codebase Analysis Summary:",
             f"- {self.metrics.total_files} files, {self.metrics.total_functions} functions",
             f"- {self.metrics.critical_count} critical, {self.metrics.warning_count} warnings",
             f"- {self.metrics.duplicate_count} duplicate code groups",
@@ -366,7 +366,7 @@ Keep your response concise (under 200 words)."""
         # CSS styles for the report
         styles = """
         <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                    max-width: 900px; margin: 40px auto; padding: 20px; background: #0d1117; color: #c9d1d9; }
             h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
             h2 { color: #8b949e; margin-top: 30px; }
@@ -382,7 +382,7 @@ Keep your response concise (under 200 words)."""
             .roadmap { list-style: none; padding: 0; }
             .roadmap li { padding: 10px 15px; margin: 5px 0; background: #21262d; border-radius: 6px; }
             .roadmap li::before { content: '→ '; color: #58a6ff; }
-            .ai-advice { background: linear-gradient(135deg, #1f2937 0%, #111827 100%); 
+            .ai-advice { background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
                          padding: 20px; border-radius: 6px; border: 1px solid #374151; margin-top: 20px; }
             .ai-advice h2 { color: #a78bfa; }
         </style>
@@ -421,19 +421,19 @@ Keep your response concise (under 200 words)."""
         html.append("  <h2>🔥 Critical Hotspots</h2>")
 
         for item in plan.critical_hotspots:
-            html.append(f"  <div class='hotspot'>")
+            html.append("  <div class='hotspot'>")
             html.append(f"    <strong>{item.function_name}</strong> <em>({item.file_path})</em>")
             html.append(f"    <p>{item.description}</p>")
             html.append(f"    <small>Impact: {item.impact} | Effort: {item.effort}</small>")
-            html.append(f"  </div>")
+            html.append("  </div>")
 
         html.append("")
         html.append("  <h2>⚡ Quick Wins</h2>")
 
         for item in plan.quick_wins:
-            html.append(f"  <div class='quick-win'>")
+            html.append("  <div class='quick-win'>")
             html.append(f"    <strong>{item.function_name}:</strong> {item.description}")
-            html.append(f"  </div>")
+            html.append("  </div>")
 
         if plan.llm_advice:
             html.append("")
