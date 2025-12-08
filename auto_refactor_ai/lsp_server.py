@@ -124,8 +124,6 @@ class AutoRefactorLanguageServer(LanguageServer):
             },
         )
 
-
-
     def get_hover_info(self, uri: str, line: int) -> Optional[lsp.Hover]:
         """Get hover information for a specific position."""
         issues = self._diagnostics_cache.get(uri, [])
@@ -227,8 +225,6 @@ def _register_features(server: AutoRefactorLanguageServer):
         doc = server.workspace.get_text_document(uri)
         diagnostics = server.get_diagnostics(uri, doc.source)
         server.publish_diagnostics(uri, diagnostics)
-
-
 
     @server.feature(lsp.TEXT_DOCUMENT_CODE_ACTION)
     def code_action(params: lsp.CodeActionParams) -> List[lsp.CodeAction]:

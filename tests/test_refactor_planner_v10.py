@@ -178,5 +178,5 @@ class TestCLIOutputFlag:
         handle_refactor_plan(args, config, issues)
 
         assert output_file.exists()
-        content = output_file.read_text()
+        content = output_file.read_text(encoding="utf-8")
         assert "<!DOCTYPE html>" in content

@@ -285,7 +285,6 @@ class TestFindDuplicates:
         assert "process" in words
 
 
-
 class TestDuplicateGroup:
     """Test DuplicateGroup properties."""
 
@@ -324,13 +323,39 @@ class TestDuplicateGroup:
     def test_files_property(self):
         """Test files set property."""
         functions = [
-            FunctionSignature(file="a.py", name="f1", start_line=1, end_line=1, parameters=[], body_hash="a", parameter_count=0, line_count=1),
-            FunctionSignature(file="a.py", name="f2", start_line=2, end_line=2, parameters=[], body_hash="a", parameter_count=0, line_count=1),
-            FunctionSignature(file="b.py", name="f3", start_line=1, end_line=1, parameters=[], body_hash="a", parameter_count=0, line_count=1),
+            FunctionSignature(
+                file="a.py",
+                name="f1",
+                start_line=1,
+                end_line=1,
+                parameters=[],
+                body_hash="a",
+                parameter_count=0,
+                line_count=1,
+            ),
+            FunctionSignature(
+                file="a.py",
+                name="f2",
+                start_line=2,
+                end_line=2,
+                parameters=[],
+                body_hash="a",
+                parameter_count=0,
+                line_count=1,
+            ),
+            FunctionSignature(
+                file="b.py",
+                name="f3",
+                start_line=1,
+                end_line=1,
+                parameters=[],
+                body_hash="a",
+                parameter_count=0,
+                line_count=1,
+            ),
         ]
         group = DuplicateGroup(functions=functions, similarity=1.0)
         assert group.files == {"a.py", "b.py"}
-
 
 
 class TestProjectAnalysis:
@@ -384,18 +409,15 @@ def bar():
         # Group 1: 2 functions of 10 lines
         f1 = FunctionSignature("a.py", "f1", 1, 10, [], "h1", 0, 10)
         f2 = FunctionSignature("b.py", "f2", 1, 10, [], "h1", 0, 10)
-        g1 = DuplicateGroup([f1, f2], 1.0) # savings = 10
+        g1 = DuplicateGroup([f1, f2], 1.0)  # savings = 10
 
         # Group 2: 3 functions of 5 lines
         f3 = FunctionSignature("c.py", "f3", 1, 5, [], "h2", 0, 5)
         f4 = FunctionSignature("d.py", "f4", 1, 5, [], "h2", 0, 5)
         f5 = FunctionSignature("e.py", "f5", 1, 5, [], "h2", 0, 5)
-        g2 = DuplicateGroup([f3, f4, f5], 1.0) # savings = 10
+        g2 = DuplicateGroup([f3, f4, f5], 1.0)  # savings = 10
 
-        analysis = ProjectAnalysis(
-            root_path=".",
-            duplicates=[g1, g2]
-        )
+        analysis = ProjectAnalysis(root_path=".", duplicates=[g1, g2])
 
         assert analysis.duplicate_count == 5
         assert analysis.potential_savings == 20

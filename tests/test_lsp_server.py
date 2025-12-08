@@ -131,8 +131,6 @@ def very_long_function():
             "too long" in d.message.lower() or "long" in d.message.lower() for d in diagnostics
         )
 
-
-
     @pytest.mark.skipif(
         not pytest.importorskip("pygls", reason="pygls not installed"), reason="pygls not installed"
     )
@@ -153,7 +151,7 @@ def very_long_function():
             start_line=10,
             end_line=20,
             rule_name="function-too-long",
-            message="Too long"
+            message="Too long",
         )
         server._diagnostics_cache[uri] = [issue]
 
@@ -188,18 +186,17 @@ def very_long_function():
             start_line=10,
             end_line=20,
             rule_name="function-too-long",
-            message="Too long"
+            message="Too long",
         )
         server._diagnostics_cache[uri] = [issue]
 
         # Simulate diagnostic from client
         diagnostic = lsp.Diagnostic(
             range=lsp.Range(
-                start=lsp.Position(line=9, character=0),
-                end=lsp.Position(line=19, character=0)
+                start=lsp.Position(line=9, character=0), end=lsp.Position(line=19, character=0)
             ),
             message="Too long",
-            code="function-too-long"
+            code="function-too-long",
         )
 
         actions = server.get_code_actions(uri, [diagnostic])
@@ -207,6 +204,7 @@ def very_long_function():
         assert len(actions) == 1
         assert "Show Explanation" in actions[0].command.title
         assert actions[0].command.command == "auto-refactor-ai.showExplanation"
+
 
 class TestCLIIntegration:
     """Test CLI integration with LSP flags."""
@@ -248,7 +246,6 @@ class TestStartServer:
     def test_start_server_function_exists(self):
         """Test start_server function exists."""
 
-
     def test_main_function_exists(self):
         """Test main entry point exists."""
         from auto_refactor_ai.lsp_server import main
@@ -273,11 +270,14 @@ class TestStartServer:
 
         # Capture handlers
         handlers = {}
+
         def feature_decorator(feature_name):
             def decorator(func):
                 handlers[feature_name] = func
                 return func
+
             return decorator
+
         server.feature.side_effect = feature_decorator
         server.command.side_effect = feature_decorator
 
@@ -341,7 +341,9 @@ class TestStartServer:
 
         # Test start_server with stdio
         mock_server = mocker.patch("auto_refactor_ai.lsp_server.server")
-        mock_get_server = mocker.patch("auto_refactor_ai.lsp_server.get_server", return_value=mock_server)
+        mock_get_server = mocker.patch(
+            "auto_refactor_ai.lsp_server.get_server", return_value=mock_server
+        )
 
         start_server(transport="stdio")
         mock_server.start_io.assert_called_once()
@@ -358,12 +360,18 @@ class TestStartServer:
         mock_start = mocker.patch("auto_refactor_ai.lsp_server.start_server")
 
         # Test default args
-        mocker.patch("argparse.ArgumentParser.parse_args", return_value=mocker.Mock(tcp=False, host="127.0.0.1", port=2087))
+        mocker.patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=mocker.Mock(tcp=False, host="127.0.0.1", port=2087),
+        )
         main()
         mock_start.assert_called_with(transport="stdio", host="127.0.0.1", port=2087)
 
         # Test tcp args
-        mocker.patch("argparse.ArgumentParser.parse_args", return_value=mocker.Mock(tcp=True, host="0.0.0.0", port=8080))
+        mocker.patch(
+            "argparse.ArgumentParser.parse_args",
+            return_value=mocker.Mock(tcp=True, host="0.0.0.0", port=8080),
+        )
         main()
         mock_start.assert_called_with(transport="tcp", host="0.0.0.0", port=8080)
 
@@ -384,14 +392,14 @@ class TestStartServer:
             start_line=10,
             end_line=20,
             rule_name="function-too-long",
-            message="Too long"
+            message="Too long",
         )
         server._diagnostics_cache[uri] = [issue]
 
         # Test hover over the line
         params = lsp.HoverParams(
             text_document=lsp.TextDocumentIdentifier(uri=uri),
-            position=lsp.Position(line=15, character=5)
+            position=lsp.Position(line=15, character=5),
         )
 
         # Manually call handler (since we can't easily trigger the decorator logic in unit test without full client)
@@ -415,4 +423,3 @@ class TestStartServer:
     def test_code_actions_logic(self):
         """verify code action generation logic"""
         pass
-

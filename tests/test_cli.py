@@ -336,7 +336,9 @@ max_nesting_depth = 1
         try:
             with patch("sys.argv", ["auto-refactor-ai", temp_path, "--ai-suggestions"]):
                 with patch("auto_refactor_ai.ai_suggestions.get_ai_suggestions") as mock_get:
-                    with patch("auto_refactor_ai.ai_suggestions.print_ai_suggestions") as mock_print:
+                    with patch(
+                        "auto_refactor_ai.ai_suggestions.print_ai_suggestions"
+                    ) as mock_print:
                         mock_get.return_value = "Summary"
                         main()
 
