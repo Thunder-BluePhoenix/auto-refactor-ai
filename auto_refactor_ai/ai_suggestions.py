@@ -4,18 +4,15 @@ This module provides AI-powered suggestions for fixing code issues
 by integrating with LLM providers to generate refactored code.
 """
 
-import ast
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 
 from .analyzer import Issue, Severity
 from .llm_providers import (
-    get_provider,
     LLMConfig,
-    LLMProvider,
     RefactoringSuggestion,
     check_provider_availability,
+    get_provider,
 )
 
 
@@ -62,7 +59,7 @@ def extract_function_source(file_path: str, start_line: int, end_line: int) -> s
         The source code of the function
     """
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Extract lines (convert to 0-indexed)
@@ -156,7 +153,7 @@ def format_ai_suggestion(result: AIAnalysisResult, show_original: bool = True) -
 
     # Header
     lines.append("\n" + "=" * 80)
-    lines.append(f"🤖 AI REFACTORING SUGGESTION")
+    lines.append("🤖 AI REFACTORING SUGGESTION")
     lines.append("=" * 80)
     lines.append(f"File: {result.issue.file}:{result.issue.start_line}-{result.issue.end_line}")
     lines.append(f"Function: {result.issue.function_name}()")

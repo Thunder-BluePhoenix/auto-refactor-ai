@@ -142,7 +142,7 @@ def apply_refactoring(
         Tuple of (success, error_message)
     """
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             lines = f.readlines()
 
         # Convert to 0-indexed
@@ -150,11 +150,8 @@ def apply_refactoring(
         end_idx = end_line
 
         # Get the indentation of the original function
-        original_indent = ""
         if lines[start_idx]:
-            original_indent = lines[start_idx][
-                : len(lines[start_idx]) - len(lines[start_idx].lstrip())
-            ]
+            pass  # Preserve indentation structure
 
         # Prepare refactored code with proper indentation
         refactored_lines = refactored_code.splitlines(keepends=True)
@@ -227,11 +224,11 @@ def format_diff_preview(result: RefactorResult) -> str:
                 lines.append(f"  {line}")
 
     if result.applied:
-        lines.append(f"\n✅ Applied successfully")
+        lines.append("\n✅ Applied successfully")
         if result.backup_path:
             lines.append(f"   Backup: {result.backup_path}")
     elif result.skipped:
-        lines.append(f"\n⏭️  Skipped by user")
+        lines.append("\n⏭️  Skipped by user")
     elif result.error:
         lines.append(f"\n❌ Error: {result.error}")
 

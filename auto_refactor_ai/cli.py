@@ -3,9 +3,9 @@ import json
 import sys
 from pathlib import Path
 
-from .analyzer import analyze_file, Severity
-from .config import load_config, Config
-from .explanations import get_explanation, format_explanation, get_severity_guidance
+from .analyzer import Severity, analyze_file
+from .config import Config, load_config
+from .explanations import format_explanation, get_explanation, get_severity_guidance
 
 
 def create_argument_parser():
@@ -68,6 +68,14 @@ def create_argument_parser():
     # V9: Git Integration
     parser.add_argument("--git", action="store_true", help="Analyze modified files (V9)")
     parser.add_argument("--staged", action="store_true", help="Analyze staged files (V9)")
+    # V10: Refactor Planning
+    parser.add_argument("--plan", action="store_true", help="Generate a refactoring plan (V10)")
+    parser.add_argument(
+        "--plan-format",
+        choices=["text", "markdown"],
+        default="text",
+        help="Format for the refactoring plan",
+    )
     return parser
 
 
@@ -155,7 +163,7 @@ def main():
         sys.exit(0)
 
     # V8: Project-level analysis mode
-    if args.project or args.find_duplicates:
+    if (args.project or args.find_duplicates) and not args.plan:
         handle_project_analysis(args)
         return
 
@@ -166,6 +174,11 @@ def main():
     # Collect files and run analysis
     files, target_path = collect_files_to_analyze(args, config)
     issues = run_analysis(files, config)
+
+    # V10: Refactor Planning Mode
+    if args.plan:
+        handle_refactor_plan(args, config, issues)
+        return
 
     # V6: AI Suggestions mode
     if args.ai_suggestions:
@@ -181,7 +194,6 @@ def handle_ai_suggestions(issues, args):
     from .ai_suggestions import (
         get_ai_suggestions,
         print_ai_suggestions,
-        get_provider_status_message,
     )
     from .llm_providers import LLMConfig, LLMProvider
 
@@ -238,6 +250,36 @@ def handle_project_analysis(args):
     )
 
     print_project_analysis(analysis)
+
+
+def handle_refactor_plan(args, config, issues):
+    """Handle refactor planning mode (V10)."""
+    from .project_analyzer import analyze_project
+    from .refactor_planner import RefactorPlanner
+
+    # Run project analysis for duplicates if it's a directory
+    project_analysis = None
+    target_path = Path(args.path)
+    if target_path.is_dir():
+        print("🔍 Analyzed project structure for duplicates...")
+        project_analysis = analyze_project(
+            root_path=str(target_path),
+            min_lines=args.min_lines,
+            similarity_threshold=args.similarity_threshold,
+        )
+
+    # Initialize planner
+    print("🧠 Generating strategic refactoring plan...")
+    planner = RefactorPlanner(issues, project_analysis)
+    plan = planner.generate_plan()
+
+    # Optional LLM Advice (Placeholder for now)
+    if args.ai_suggestions:
+        # TODO: Implement LLM advice integration
+        pass
+
+    # Print plan
+    print(planner.format_plan(plan, format_type=args.plan_format))
 
 
 def handle_auto_refactor(ai_summary, args):
@@ -354,7 +396,7 @@ def print_issues_with_explanations(issues, verbose=True, summary=False):
     print(f"Found {len(issues)} issue(s) with detailed explanations")
     print("=" * 80 + "\n")
 
-    for i, issue in enumerate(sorted_issues, 1):
+    for _, issue in enumerate(sorted_issues, 1):
         explanation = get_explanation(issue)
 
         # Print detailed explanation

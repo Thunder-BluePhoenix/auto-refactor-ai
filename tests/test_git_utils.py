@@ -1,9 +1,8 @@
 """Tests for git_utils module (V9)."""
 
-import os
-import pytest
-from unittest.mock import patch, MagicMock
-from auto_refactor_ai.git_utils import is_git_repo, get_changed_files
+from unittest.mock import MagicMock, patch
+
+from auto_refactor_ai.git_utils import get_changed_files, is_git_repo
 
 
 class TestGitUtils:

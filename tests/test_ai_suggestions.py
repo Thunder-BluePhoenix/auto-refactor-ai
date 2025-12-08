@@ -1,23 +1,20 @@
 """Tests for AI suggestions module."""
 
-import pytest
-from unittest.mock import patch, MagicMock
-import tempfile
 import os
+import tempfile
+from unittest.mock import MagicMock, patch
 
-from auto_refactor_ai.analyzer import Issue, Severity
 from auto_refactor_ai.ai_suggestions import (
     AIAnalysisResult,
     AIAnalysisSummary,
     extract_function_source,
-    get_ai_suggestions,
     format_ai_suggestion,
     format_ai_summary,
+    get_ai_suggestions,
     get_provider_status_message,
 )
+from auto_refactor_ai.analyzer import Issue, Severity
 from auto_refactor_ai.llm_providers import (
-    LLMConfig,
-    LLMProvider,
     RefactoringSuggestion,
 )
 

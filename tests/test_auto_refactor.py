@@ -1,26 +1,24 @@
 """Tests for auto_refactor module (V7)."""
 
 import os
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 
+from auto_refactor_ai.ai_suggestions import AIAnalysisResult, AIAnalysisSummary
+from auto_refactor_ai.analyzer import Issue, Severity
 from auto_refactor_ai.auto_refactor import (
-    generate_diff,
-    create_backup,
-    apply_refactoring,
-    rollback_file,
-    process_single_refactoring,
-    auto_refactor,
-    format_diff_preview,
-    format_refactor_summary,
     RefactorResult,
     RefactorSummary,
+    apply_refactoring,
+    auto_refactor,
+    create_backup,
+    format_diff_preview,
+    format_refactor_summary,
+    generate_diff,
+    process_single_refactoring,
+    rollback_file,
 )
-from auto_refactor_ai.ai_suggestions import AIAnalysisResult, AIAnalysisSummary
 from auto_refactor_ai.llm_providers import RefactoringSuggestion
-from auto_refactor_ai.analyzer import Issue, Severity
 
 
 class TestGenerateDiff:

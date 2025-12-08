@@ -2,7 +2,6 @@
 
 import os
 import subprocess
-from pathlib import Path
 from typing import List
 
 
@@ -52,9 +51,7 @@ def get_changed_files(path: str, staged: bool = False) -> List[str]:
     cmd.append("*.py")
 
     try:
-        result = subprocess.run(
-            cmd, cwd=path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True
-        )
+        result = subprocess.run(cmd, cwd=path, capture_output=True, text=True, check=True)
 
         # Parse output relative paths and convert to absolute
         files = []

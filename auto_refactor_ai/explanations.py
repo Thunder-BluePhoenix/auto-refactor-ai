@@ -6,6 +6,7 @@ including why it matters, how to fix it, and examples of good vs bad code.
 
 from dataclasses import dataclass
 from typing import Dict, List, Optional
+
 from .analyzer import Issue, Severity
 
 

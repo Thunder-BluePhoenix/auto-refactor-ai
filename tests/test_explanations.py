@@ -1,12 +1,11 @@
 """Tests for explanations module (V5)."""
 
-import pytest
 from auto_refactor_ai.analyzer import Issue, Severity
 from auto_refactor_ai.explanations import (
-    get_explanation,
-    format_explanation,
-    get_severity_guidance,
     EXPLANATIONS,
+    format_explanation,
+    get_explanation,
+    get_severity_guidance,
 )
 
 

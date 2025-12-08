@@ -1,14 +1,14 @@
 """Tests for CLI module."""
 
 import json
-import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import sys
+from unittest.mock import patch
 
-from auto_refactor_ai.cli import main, print_issues, print_summary, print_json
+import pytest
+
 from auto_refactor_ai.analyzer import Issue, Severity
+from auto_refactor_ai.cli import main, print_issues, print_json, print_summary
 from auto_refactor_ai.config import Config
 
 

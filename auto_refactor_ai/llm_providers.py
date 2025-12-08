@@ -4,12 +4,12 @@ This module provides a unified interface to multiple LLM providers
 (OpenAI, Anthropic, Google) for generating refactoring suggestions.
 """
 
-import os
 import json
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Optional, List, Dict, Any
 from enum import Enum
+from typing import Dict, List, Optional
 
 
 class LLMProvider(Enum):
@@ -249,14 +249,14 @@ class OpenAIProvider(BaseLLMProvider):
 
             client = openai.OpenAI(api_key=self.config.api_key)
 
-            messages = []
+            messages: List[Dict[str, str]] = []
             if system_prompt:
                 messages.append({"role": "system", "content": system_prompt})
             messages.append({"role": "user", "content": prompt})
 
             response = client.chat.completions.create(
                 model=self.config.model,
-                messages=messages,
+                messages=messages,  # type: ignore[arg-type]
                 temperature=self.config.temperature,
                 max_tokens=self.config.max_tokens,
                 timeout=self.config.timeout,
@@ -323,7 +323,7 @@ class AnthropicProvider(BaseLLMProvider):
             )
 
         try:
-            import anthropic
+            import anthropic  # type: ignore[import-not-found]
 
             client = anthropic.Anthropic(api_key=self.config.api_key)
 
@@ -393,7 +393,7 @@ class GoogleProvider(BaseLLMProvider):
             )
 
         try:
-            import google.generativeai as genai
+            import google.generativeai as genai  # type: ignore[import-untyped]
 
             genai.configure(api_key=self.config.api_key)
 
@@ -453,8 +453,8 @@ class OllamaProvider(BaseLLMProvider):
 
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> LLMResponse:
         """Generate a response using Ollama API."""
-        import urllib.request
         import urllib.error
+        import urllib.request
 
         base_url = self.config.base_url or "http://localhost:11434"
 
@@ -533,7 +533,7 @@ def get_provider(config: Optional[LLMConfig] = None) -> BaseLLMProvider:
     }
 
     provider_class = providers.get(config.provider, OpenAIProvider)
-    return provider_class(config)
+    return provider_class(config)  # type: ignore[abstract]
 
 
 def check_provider_availability() -> Dict[str, bool]:

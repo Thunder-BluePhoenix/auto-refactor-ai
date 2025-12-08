@@ -1,21 +1,19 @@
 """Tests for project_analyzer module (V8)."""
 
 import ast
-import pytest
 import tempfile
 from pathlib import Path
 
 from auto_refactor_ai.project_analyzer import (
-    normalize_ast,
-    hash_function_body,
+    DuplicateGroup,
+    FunctionSignature,
+    ProjectAnalysis,
+    analyze_project,
     extract_functions_from_file,
     find_duplicates,
-    analyze_project,
     format_project_analysis,
-    FunctionSignature,
-    DuplicateGroup,
-    ProjectAnalysis,
-    ASTNormalizer,
+    hash_function_body,
+    normalize_ast,
 )
 
 

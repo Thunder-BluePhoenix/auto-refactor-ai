@@ -8,10 +8,10 @@ This module provides cross-file analysis capabilities including:
 
 import ast
 import hashlib
+from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple, Set
-from collections import defaultdict
+from typing import Any, Dict, List, Set, Union
 
 
 @dataclass
@@ -97,7 +97,7 @@ class ASTNormalizer(ast.NodeTransformer):
         if original not in self.name_map:
             self.name_map[original] = f"var_{self.counter}"
             self.counter += 1
-        return self.name_map[original]
+        return str(self.name_map[original])
 
     def visit_Name(self, node):
         # Normalize variable names
@@ -164,7 +164,7 @@ def normalize_ast(node: ast.AST) -> str:
     return ast.dump(normalized, annotate_fields=False)
 
 
-def hash_function_body(func_node: ast.FunctionDef) -> str:
+def hash_function_body(func_node: Union[ast.FunctionDef, ast.AsyncFunctionDef]) -> str:
     """Generate a hash of a function's body structure.
 
     Args:
@@ -189,7 +189,7 @@ def extract_functions_from_file(file_path: str) -> List[FunctionSignature]:
     functions = []
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             source = f.read()
 
         tree = ast.parse(source)
@@ -202,7 +202,8 @@ def extract_functions_from_file(file_path: str) -> List[FunctionSignature]:
                     params.append(arg.arg)
 
                 # Calculate line count
-                line_count = node.end_lineno - node.lineno + 1 if hasattr(node, "end_lineno") else 0
+                end_lineno = getattr(node, "end_lineno", None)
+                line_count = (end_lineno - node.lineno + 1) if end_lineno is not None else 0
 
                 # Generate body hash
                 body_hash = hash_function_body(node)
@@ -219,7 +220,7 @@ def extract_functions_from_file(file_path: str) -> List[FunctionSignature]:
                 )
                 functions.append(sig)
 
-    except Exception as e:
+    except Exception:
         # Skip files that can't be parsed
         pass
 
@@ -267,7 +268,7 @@ def find_duplicates(
 
     # Find groups with duplicates
     duplicates = []
-    for body_hash, group in hash_groups.items():
+    for _, group in hash_groups.items():
         if len(group) >= 2:
             # Suggest a consolidated name
             common_words = _find_common_words([f.name for f in group])
@@ -296,11 +297,11 @@ def _find_common_words(names: List[str]) -> List[str]:
         return []
 
     # Split into words
-    word_sets = []
+    word_sets: List[Set[str]] = []
     for name in names:
         # Split on underscores and camelCase
-        words = set()
-        current = []
+        words: Set[str] = set()
+        current: List[str] = []
         for char in name:
             if char == "_":
                 if current:

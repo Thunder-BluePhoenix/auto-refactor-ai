@@ -1,15 +1,14 @@
 """Tests for config module."""
 
-import pytest
 import tempfile
 from pathlib import Path
 
 from auto_refactor_ai.config import (
     Config,
+    _parse_simple_toml,
+    find_config_file,
     load_config,
     load_toml_config,
-    find_config_file,
-    _parse_simple_toml,
 )
 
 

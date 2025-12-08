@@ -1,21 +1,21 @@
 """Tests for LLM providers module."""
 
-import pytest
-from unittest.mock import patch, MagicMock
 import os
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 from auto_refactor_ai.llm_providers import (
-    LLMProvider,
-    LLMConfig,
-    LLMResponse,
-    RefactoringSuggestion,
-    BaseLLMProvider,
-    OpenAIProvider,
     AnthropicProvider,
     GoogleProvider,
+    LLMConfig,
+    LLMProvider,
+    LLMResponse,
     OllamaProvider,
-    get_provider,
+    OpenAIProvider,
+    RefactoringSuggestion,
     check_provider_availability,
+    get_provider,
 )
 
 
@@ -144,7 +144,7 @@ class TestOpenAIProvider:
     def test_generate_with_mock(self):
         """Test generate with mocked OpenAI client."""
         try:
-            import openai
+            import openai  # noqa: F401
         except ImportError:
             pytest.skip("OpenAI package not installed")
 
