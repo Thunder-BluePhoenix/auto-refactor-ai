@@ -341,7 +341,7 @@ class TestStartServer:
 
         # Test start_server with stdio
         mock_server = mocker.patch("auto_refactor_ai.lsp_server.server")
-        mock_get_server = mocker.patch(
+        mocker.patch(
             "auto_refactor_ai.lsp_server.get_server", return_value=mock_server
         )
 
@@ -397,7 +397,7 @@ class TestStartServer:
         server._diagnostics_cache[uri] = [issue]
 
         # Test hover over the line
-        params = lsp.HoverParams(
+        lsp.HoverParams(
             text_document=lsp.TextDocumentIdentifier(uri=uri),
             position=lsp.Position(line=15, character=5),
         )

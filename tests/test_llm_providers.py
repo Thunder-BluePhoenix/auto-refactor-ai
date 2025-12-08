@@ -180,7 +180,7 @@ class TestAnthropicProvider:
     def test_is_available_without_key(self):
         """Test availability check without API key."""
         config = LLMConfig(provider=LLMProvider.ANTHROPIC, api_key=None)
-        provider = AnthropicProvider(config)
+        AnthropicProvider(config)
 
     def test_generate_with_mock(self):
         """Test generate with mocked Anthropic client."""
@@ -244,7 +244,7 @@ class TestGoogleProvider:
     def test_is_available_without_key(self):
         """Test availability check without API key."""
         config = LLMConfig(provider=LLMProvider.GOOGLE, api_key=None)
-        provider = GoogleProvider(config)
+        GoogleProvider(config)
 
     def test_generate_with_mock(self):
         """Test generate with mocked Google client."""
