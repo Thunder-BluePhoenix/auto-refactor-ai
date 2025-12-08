@@ -323,7 +323,7 @@ class AnthropicProvider(BaseLLMProvider):
             )
 
         try:
-            import anthropic  # type: ignore[import-not-found]
+            import anthropic
 
             client = anthropic.Anthropic(api_key=self.config.api_key)
 
@@ -334,7 +334,10 @@ class AnthropicProvider(BaseLLMProvider):
                 messages=[{"role": "user", "content": prompt}],
             )
 
-            content = response.content[0].text if response.content else ""
+            if response.content and hasattr(response.content[0], "text"):
+                content = response.content[0].text
+            else:
+                content = ""
             tokens = response.usage.input_tokens + response.usage.output_tokens
 
             # Estimate cost
@@ -393,7 +396,7 @@ class GoogleProvider(BaseLLMProvider):
             )
 
         try:
-            import google.generativeai as genai  # type: ignore[import-untyped]
+            import google.generativeai as genai
 
             genai.configure(api_key=self.config.api_key)
 

@@ -35,17 +35,17 @@ def process_data(data: list) -> list:
     """Process data with flattened, readable logic."""
     if not data:
         return []
-    
+
     results = []
-    
+
     for item in data:
         if not is_eligible_account(item):
             continue
-            
+
         for transaction in item.get('transactions', []):
             if is_large_pending_transaction(transaction):
                 results.append(
                     extract_transaction_info(transaction, item['user_id'])
                 )
-    
+
     return results

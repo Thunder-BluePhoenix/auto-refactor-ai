@@ -58,11 +58,11 @@ def process_order_b(order_data):
     """Process order - unique to this file (different from test_duplicates_a)."""
     if not order_data:
         return None
-    
+
     items = order_data.get('items', [])
     subtotal = sum(item['price'] for item in items)
     tax = subtotal * 0.08
-    
+
     return {
         'subtotal': subtotal,
         'tax': tax,
@@ -74,7 +74,7 @@ def send_alert(recipient, subject, body, priority="normal"):
     """Send alert - unique to this file."""
     if priority == "high":
         subject = f"[URGENT] {subject}"
-    
+
     return {
         'to': recipient,
         'subject': subject,

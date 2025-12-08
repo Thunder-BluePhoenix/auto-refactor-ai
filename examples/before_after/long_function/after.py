@@ -56,7 +56,7 @@ def calculate_shipping(subtotal: float, gift_wrap: bool = False) -> float:
     return cost
 
 
-def process_order(order_id: str, items: List[OrderItem], 
+def process_order(order_id: str, items: List[OrderItem],
                   discount_code: Optional[str] = None,
                   gift_wrap: bool = False) -> dict:
     """Process an order with clear, testable steps."""
@@ -64,7 +64,7 @@ def process_order(order_id: str, items: List[OrderItem],
     discount = apply_discount(subtotal, discount_code)
     shipping = calculate_shipping(subtotal, gift_wrap)
     total = subtotal - discount + shipping
-    
+
     return {
         'id': order_id,
         'subtotal': subtotal,

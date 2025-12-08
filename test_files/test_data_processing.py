@@ -1,7 +1,5 @@
 """Test file with data processing patterns - ETL and analytics code."""
 
-from dataclasses import dataclass
-from typing import List, Dict, Any
 
 
 def transform_data_pipeline(
@@ -15,17 +13,17 @@ def transform_data_pipeline(
     """ETL pipeline with too many parameters."""
     # Apply filters
     filtered = [item for item in raw_data if all(f(item) for f in filters)]
-    
+
     # Apply transformations
     transformed = filtered
     for transform in transformations:
         transformed = [transform(item) for item in transformed]
-    
+
     # Apply aggregations
     result = {}
     for agg_name, agg_func in aggregations.items():
         result[agg_name] = agg_func(transformed)
-    
+
     return result
 
 
@@ -33,23 +31,23 @@ def calculate_statistics(data):
     """Long function doing too much - should be split."""
     if not data:
         return {}
-    
+
     # Calculate mean
     total = sum(data)
     count = len(data)
     mean = total / count
-    
+
     # Calculate variance
     squared_diff_sum = 0
     for value in data:
         diff = value - mean
         squared_diff_sum += diff * diff
     variance = squared_diff_sum / count
-    
+
     # Calculate standard deviation
     import math
     std_dev = math.sqrt(variance)
-    
+
     # Calculate median
     sorted_data = sorted(data)
     mid = count // 2
@@ -57,26 +55,26 @@ def calculate_statistics(data):
         median = (sorted_data[mid - 1] + sorted_data[mid]) / 2
     else:
         median = sorted_data[mid]
-    
+
     # Calculate mode
     frequency = {}
     for value in data:
         frequency[value] = frequency.get(value, 0) + 1
     max_freq = max(frequency.values())
     mode = [k for k, v in frequency.items() if v == max_freq]
-    
+
     # Calculate quartiles
     q1_idx = count // 4
     q3_idx = 3 * count // 4
     q1 = sorted_data[q1_idx]
     q3 = sorted_data[q3_idx]
     iqr = q3 - q1
-    
+
     # Calculate min/max
     minimum = min(data)
     maximum = max(data)
     data_range = maximum - minimum
-    
+
     return {
         "mean": mean,
         "variance": variance,
@@ -96,7 +94,7 @@ def calculate_statistics(data):
 def parse_nested_config(config):
     """Deeply nested config parsing."""
     result = {}
-    
+
     if config:
         if "database" in config:
             if "connection" in config["database"]:
@@ -104,7 +102,7 @@ def parse_nested_config(config):
                     if "port" in config["database"]["connection"]:
                         result["db_host"] = config["database"]["connection"]["host"]
                         result["db_port"] = config["database"]["connection"]["port"]
-    
+
     return result
 
 

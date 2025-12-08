@@ -21,10 +21,10 @@ def process_order(order):
     """Well-structured order processing."""
     if not order.is_valid():
         return {"error": "Invalid order"}
-    
+
     total = calculate_total(order.items)
     tax = total * 0.1
-    
+
     return {
         "subtotal": total,
         "tax": tax,
@@ -34,19 +34,19 @@ def process_order(order):
 
 class UserService:
     """Clean class with proper method sizes."""
-    
+
     def __init__(self, repository):
         self.repository = repository
-    
+
     def get_user(self, user_id):
         """Simple getter."""
         return self.repository.find_by_id(user_id)
-    
+
     def create_user(self, name, email):
         """Simple creator."""
         user = {"name": name, "email": email}
         return self.repository.save(user)
-    
+
     def delete_user(self, user_id):
         """Simple deleter."""
         return self.repository.delete(user_id)
@@ -62,13 +62,13 @@ def format_currency(amount, currency="USD"):
 def parse_date(date_string):
     """Clean date parsing."""
     from datetime import datetime
-    
+
     formats = ["%Y-%m-%d", "%d/%m/%Y", "%m-%d-%Y"]
-    
+
     for fmt in formats:
         try:
             return datetime.strptime(date_string, fmt)
         except ValueError:
             continue
-    
+
     return None

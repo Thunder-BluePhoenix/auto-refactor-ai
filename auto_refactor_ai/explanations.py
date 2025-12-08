@@ -14,6 +14,7 @@ from .analyzer import Issue, Severity
 class Explanation:
     """Detailed explanation for a code issue."""
 
+    title: str
     why_it_matters: str
     how_to_fix: List[str]
     good_example: str
@@ -25,6 +26,7 @@ class Explanation:
 # Explanation templates for each rule
 EXPLANATIONS: Dict[str, Explanation] = {
     "function-too-long": Explanation(
+        title="Function Too Long",
         why_it_matters="""
 Long functions are harder to understand, test, and maintain. They often violate
 the Single Responsibility Principle (SRP) by doing too many things. Studies show
@@ -104,6 +106,7 @@ def process_user_registration(user_data):
         ],
     ),
     "too-many-parameters": Explanation(
+        title="Too Many Parameters",
         why_it_matters="""
 Functions with too many parameters are difficult to use, test, and maintain.
 Each parameter adds complexity and makes the function harder to understand.
@@ -178,6 +181,7 @@ send_email(
         ],
     ),
     "deep-nesting": Explanation(
+        title="Deep Nesting",
         why_it_matters="""
 Deep nesting makes code significantly harder to understand and maintain.
 Each nesting level adds cognitive complexity. Code with deep nesting is
@@ -269,6 +273,7 @@ def get_explanation(issue: Issue) -> Explanation:
 def _get_default_explanation(issue: Issue) -> Explanation:
     """Generate default explanation for unknown rules."""
     return Explanation(
+        title=f"Issue: {issue.rule_name}",
         why_it_matters=f"This code pattern ({issue.rule_name}) may impact code quality.",
         how_to_fix=["Review the code and consider refactoring."],
         good_example="# No specific example available for this rule",

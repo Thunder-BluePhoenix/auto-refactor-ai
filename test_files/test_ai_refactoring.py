@@ -21,24 +21,24 @@ def calculate_order_total(items, tax_rate, discount_percent, shipping_cost,
     subtotal = 0
     for item in items:
         subtotal += item['price'] * item['quantity']
-    
+
     # Apply discount
     discount_amount = subtotal * (discount_percent / 100)
     subtotal -= discount_amount
-    
+
     # Add tax
     tax_amount = subtotal * tax_rate
     total = subtotal + tax_amount
-    
+
     # Add fees
     total += shipping_cost
     total += handling_fee
     total += gift_wrap_cost
     total += insurance_cost
-    
+
     if expedited_shipping:
         total += 15.00
-    
+
     return total
 
 
@@ -75,30 +75,30 @@ def process_data_pipeline(data):
     # Step 1: Validate input
     if data is None:
         return None
-    
+
     if not isinstance(data, list):
         data = [data]
-    
+
     # Step 2: Clean data
     cleaned = []
     for item in data:
         if item is not None:
             cleaned.append(str(item).strip())
-    
+
     # Step 3: Transform data
     transformed = []
     for item in cleaned:
         transformed.append(item.upper())
-    
+
     # Step 4: Filter data
     filtered = []
     for item in transformed:
         if len(item) > 0:
             filtered.append(item)
-    
+
     # Step 5: Sort data
     sorted_data = sorted(filtered)
-    
+
     # Step 6: Deduplicate
     seen = set()
     unique = []
@@ -106,12 +106,12 @@ def process_data_pipeline(data):
         if item not in seen:
             seen.add(item)
             unique.append(item)
-    
+
     # Step 7: Format output
     result = []
     for i, item in enumerate(unique):
         result.append(f"{i+1}. {item}")
-    
+
     return result
 
 
@@ -130,13 +130,13 @@ def analyze_sales_report(transactions, start_date, end_date, category_filter,
     """
     if transactions is None:
         return None
-    
+
     results = []
     total_sales = 0
     total_returns = 0
     category_totals = {}
     region_totals = {}
-    
+
     for transaction in transactions:
         if transaction is not None:
             trans_date = transaction.get('date')
@@ -154,15 +154,15 @@ def analyze_sales_report(transactions, start_date, end_date, category_filter,
                                         total_returns += amount
                                     else:
                                         total_sales += amount
-                                    
+
                                     if category not in category_totals:
                                         category_totals[category] = 0
                                     category_totals[category] += amount
-                                    
+
                                     if region not in region_totals:
                                         region_totals[region] = 0
                                     region_totals[region] += amount
-                                    
+
                                     results.append({
                                         'date': trans_date,
                                         'category': category,
@@ -170,19 +170,19 @@ def analyze_sales_report(transactions, start_date, end_date, category_filter,
                                         'amount': amount,
                                         'is_return': is_return
                                     })
-    
+
     if group_by == 'category':
         grouped = category_totals
     elif group_by == 'region':
         grouped = region_totals
     else:
         grouped = None
-    
+
     if sort_order == 'asc':
         results = sorted(results, key=lambda x: x['amount'])
     elif sort_order == 'desc':
         results = sorted(results, key=lambda x: x['amount'], reverse=True)
-    
+
     return {
         'transactions': results,
         'total_sales': total_sales,
