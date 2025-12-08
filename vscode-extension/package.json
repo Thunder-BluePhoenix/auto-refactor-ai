@@ -2,7 +2,7 @@
     "name": "auto-refactor-ai",
     "displayName": "Auto Refactor AI",
     "description": "AI-powered static analyzer for Python with refactoring suggestions",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "publisher": "auto-refactor-ai",
     "engines": {
         "vscode": "^1.75.0"

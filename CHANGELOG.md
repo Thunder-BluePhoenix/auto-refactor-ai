@@ -2,6 +2,23 @@
 
 All notable changes to Auto Refactor AI will be documented in this file.
 
+## [V12] - 2025-12-08
+
+### Added
+- **Community-Ready Features**
+  - Professional README with badges and feature tables
+  - Examples directory (`examples/`) with before/after refactoring samples
+  - GitHub issue templates (Bug Report, Feature Request)
+  - Pull Request template
+  - Comprehensive `CONTRIBUTING.md` guide
+  - `CODE_OF_CONDUCT.md`
+
+### Changed
+- Updated version to 0.12.0
+- Improved project documentation structure
+
+---
+
 ## [V11] - 2025-12-08
 
 ### Added

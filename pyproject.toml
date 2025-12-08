@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "auto-refactor-ai"
-version = "0.11.0"
+version = "0.12.0"
 description = "AI-powered static analyzer for Python with LLM suggestions, project analysis, git integration, refactoring plans, and LSP server"
 readme = "README.md"
 requires-python = ">=3.8"
