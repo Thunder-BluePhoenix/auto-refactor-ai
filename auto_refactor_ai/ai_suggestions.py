@@ -22,6 +22,7 @@ from .llm_providers import (
 @dataclass
 class AIAnalysisResult:
     """Result of AI analysis for a single issue."""
+
     issue: Issue
     suggestion: RefactoringSuggestion
     original_function_code: str
@@ -32,6 +33,7 @@ class AIAnalysisResult:
 @dataclass
 class AIAnalysisSummary:
     """Summary of AI analysis for all issues."""
+
     results: List[AIAnalysisResult] = field(default_factory=list)
     total_tokens: int = 0
     total_cost: float = 0.0
@@ -108,10 +110,7 @@ def get_ai_suggestions(
 
     # Sort by severity (critical first)
     severity_order = {Severity.CRITICAL: 0, Severity.WARN: 1, Severity.INFO: 2}
-    filtered_issues = sorted(
-        filtered_issues,
-        key=lambda x: severity_order[x.severity]
-    )
+    filtered_issues = sorted(filtered_issues, key=lambda x: severity_order[x.severity])
 
     # Limit number of issues
     issues_to_process = filtered_issues[:max_issues]
@@ -119,11 +118,7 @@ def get_ai_suggestions(
     for issue in issues_to_process:
         try:
             # Extract the function source code
-            original_code = extract_function_source(
-                issue.file,
-                issue.start_line,
-                issue.end_line
-            )
+            original_code = extract_function_source(issue.file, issue.start_line, issue.end_line)
 
             # Get AI suggestion
             suggestion = provider.get_refactoring_suggestion(
@@ -280,6 +275,8 @@ def get_provider_status_message() -> str:
     for provider, available in availability.items():
         status = "✅" if available else "❌"
         env_var = env_vars.get(provider, "")
-        lines.append(f"  {status} {provider.capitalize()}: {'Available' if available else f'Not configured ({env_var})'}")
+        lines.append(
+            f"  {status} {provider.capitalize()}: {'Available' if available else f'Not configured ({env_var})'}"
+        )
 
     return "\n".join(lines)

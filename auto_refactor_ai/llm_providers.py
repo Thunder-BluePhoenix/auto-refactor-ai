@@ -14,6 +14,7 @@ from enum import Enum
 
 class LLMProvider(Enum):
     """Supported LLM providers."""
+
     OPENAI = "openai"
     ANTHROPIC = "anthropic"
     GOOGLE = "google"
@@ -23,6 +24,7 @@ class LLMProvider(Enum):
 @dataclass
 class LLMConfig:
     """Configuration for LLM providers."""
+
     provider: LLMProvider = LLMProvider.OPENAI
     model: str = "gpt-4o-mini"
     api_key: Optional[str] = None
@@ -62,6 +64,7 @@ class LLMConfig:
 @dataclass
 class RefactoringSuggestion:
     """A suggested refactoring from the LLM."""
+
     original_code: str
     refactored_code: str
     explanation: str
@@ -72,6 +75,7 @@ class RefactoringSuggestion:
 @dataclass
 class LLMResponse:
     """Response from an LLM provider."""
+
     content: str
     model: str
     provider: LLMProvider
@@ -101,11 +105,7 @@ class BaseLLMProvider(ABC):
         pass
 
     def get_refactoring_suggestion(
-        self,
-        code: str,
-        issue_type: str,
-        issue_message: str,
-        function_name: str
+        self, code: str, issue_type: str, issue_message: str, function_name: str
     ) -> RefactoringSuggestion:
         """Generate a refactoring suggestion for the given code."""
         system_prompt = self._get_system_prompt()
@@ -157,11 +157,7 @@ CHANGES:
 """
 
     def _get_refactoring_prompt(
-        self,
-        code: str,
-        issue_type: str,
-        issue_message: str,
-        function_name: str
+        self, code: str, issue_type: str, issue_message: str, function_name: str
     ) -> str:
         """Generate the refactoring prompt."""
         return f"""Please refactor the following Python function to fix the detected issue.
@@ -181,7 +177,9 @@ Please provide a refactored version that:
 3. Follows Python best practices
 """
 
-    def _parse_refactoring_response(self, original_code: str, response: str) -> RefactoringSuggestion:
+    def _parse_refactoring_response(
+        self, original_code: str, response: str
+    ) -> RefactoringSuggestion:
         """Parse the LLM response into a RefactoringSuggestion."""
         refactored_code = ""
         explanation = ""
@@ -248,6 +246,7 @@ class OpenAIProvider(BaseLLMProvider):
 
         try:
             import openai
+
             client = openai.OpenAI(api_key=self.config.api_key)
 
             messages = []
@@ -325,6 +324,7 @@ class AnthropicProvider(BaseLLMProvider):
 
         try:
             import anthropic
+
             client = anthropic.Anthropic(api_key=self.config.api_key)
 
             response = client.messages.create(
@@ -394,6 +394,7 @@ class GoogleProvider(BaseLLMProvider):
 
         try:
             import google.generativeai as genai
+
             genai.configure(api_key=self.config.api_key)
 
             model = genai.GenerativeModel(self.config.model)
@@ -442,6 +443,7 @@ class OllamaProvider(BaseLLMProvider):
     def is_available(self) -> bool:
         """Check if Ollama is available."""
         import urllib.request
+
         try:
             url = f"{self.config.base_url or 'http://localhost:11434'}/api/tags"
             urllib.request.urlopen(url, timeout=2)

@@ -1,0 +1,15 @@
+# Auto Refactor AI - CI Configuration
+# This config has relaxed thresholds for the tool's own codebase
+# (since CLI and LLM providers are intentionally complex)
+
+# Maximum allowed function length in lines (relaxed for CLI)
+max_function_length = 50
+
+# Maximum allowed number of parameters per function
+max_parameters = 5
+
+# Maximum allowed nesting depth
+max_nesting_depth = 4
+
+# All rules enabled
+enabled_rules = ["function-too-long", "too-many-parameters", "deep-nesting"]

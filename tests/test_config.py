@@ -299,10 +299,12 @@ max_nesting_depth = 5
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir_path = Path(tmpdir)
             config_file = tmpdir_path / ".auto-refactor-ai.toml"
-            config_file.write_text("""
+            config_file.write_text(
+                """
 max_function_length = 45
 max_parameters = 8
-""")
+"""
+            )
 
             # Create a subdirectory to test search
             subdir = tmpdir_path / "src"

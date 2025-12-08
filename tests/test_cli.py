@@ -255,11 +255,13 @@ def func(a, b, c, d, e, f):
         """Test running with config file."""
         # Create config file
         with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as config_f:
-            config_f.write("""
+            config_f.write(
+                """
 max_function_length = 10
 max_parameters = 2
 max_nesting_depth = 1
-""")
+"""
+            )
             config_f.flush()
             config_path = config_f.name
 
